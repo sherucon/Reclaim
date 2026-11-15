@@ -8,7 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dev.reclaim.app.analytics.AnalyticsEvents
 import dev.reclaim.app.design.ReclaimTheme
-import dev.reclaim.app.ui.home.PlaceholderHomeScreen
+import dev.reclaim.app.ui.nav.ReclaimApp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ReclaimTheme {
-                PlaceholderHomeScreen()
+                ReclaimApp()
             }
         }
     }

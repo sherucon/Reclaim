@@ -27,8 +27,8 @@ jobs:
           ./gradlew
           ktlintCheck
           lintPlayDebug
-          testPlayDebugUnitTest
           testLibreDebugUnitTest
+          verifyRoborazziPlayDebug
           assemblePlayDebug
           assembleLibreDebug
 

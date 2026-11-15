@@ -1,0 +1,43 @@
+# Visual QA
+
+Reviewed in Phase 2 on the Redmi `garnet` (HyperOS, 1220 x 2712, density 2.75), plus the
+Roborazzi goldens in `app/src/test/screenshots`.
+
+## What was checked
+
+- Screens: Home, Apps, Reels, Web.
+- Goldens: soft card, pill toggle, segmented pills, status ring, mini bar chart.
+- Reports: 9 golden screenshots and 61 unit tests green, lint reports 0 issues.
+- Tokens: no hardcoded colors, radii, or shadows outside `design/`.
+- Touch targets: 48 dp minimum on every interactive element.
+- TalkBack: every toggle announces its role and label, charts carry a summary, and the dock
+  announces the selected tab.
+
+## Findings and fixes
+
+| Finding | Fix |
+|---|---|
+| The secondary pill was nearly invisible on white cards (`SurfaceMuted` on `Surface`). | The secondary style uses `CanvasRaised`, which reads as a control without a border. |
+| Uppercase tracked overlines read like template badges. | Sentence case with light tracking, per the unslop adaptation in the plan. |
+| The variable font ignored every weight; all text rendered regular. | Five static Plus Jakarta weights are bundled and mapped to 400 to 800. |
+| The Pip idle float was motion without meaning. | Removed. Illustration is static and motion is reserved for state changes. |
+| The Home subtitle was generic. | It states the real number of active protections and updates as the switches change. |
+| The date overline shouted. | `Sunday, 15 November`, not `SUNDAY, 15 NOVEMBER`. |
+| Zero-value chart bars looked like data. | They render as a 4 dp baseline tick, visibly different from a real bar. |
+
+## Known gaps, by phase
+
+- Illustrations are placeholder glyphs until the Phase 9 art pass.
+- Home and feature numbers are demo values until the services feed counters in Phases 4 and 6.
+- Toggles hold local state only in this phase; persistence arrives with the ViewModels.
+- Bar and ring values animate from zero on first composition; reduced motion support lands in Phase 3.
+- Light theme only; the warm dark theme is a v1.1 item.
+
+## Deliberate choices that a reviewer may question
+
+- Bold display type (700) is kept against the general preference for 400 to 600. The direction in
+  plan section 5.1 depends on it, and the deviation is recorded in 5.11.
+- Cards float with a warm diffuse shadow instead of a hairline border. This is the one place the
+  app spends elevation, and it is what makes the surface read as tactile rather than flat.
+- The floating dock scrolls content underneath it. Content still ends above the dock when scrolled
+  to the bottom, because the scaffold reserves the dock height.

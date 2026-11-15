@@ -23,11 +23,12 @@ fun PillButton(
     modifier: Modifier = Modifier,
     style: PillStyle = PillStyle.Primary,
     enabled: Boolean = true,
+    compact: Boolean = false,
 ) {
     val container =
         when (style) {
             PillStyle.Primary -> ReclaimColors.Ink
-            PillStyle.Secondary -> ReclaimColors.SurfaceMuted
+            PillStyle.Secondary -> ReclaimColors.CanvasRaised
         }
     val content =
         when (style) {
@@ -37,7 +38,7 @@ fun PillButton(
 
     Surface(
         onClick = onClick,
-        modifier = modifier.height(54.dp),
+        modifier = modifier.height(if (compact) 44.dp else 54.dp),
         enabled = enabled,
         shape = CircleShape,
         color = container,
@@ -47,7 +48,7 @@ fun PillButton(
             modifier =
                 Modifier
                     .fillMaxHeight()
-                    .padding(horizontal = 24.dp),
+                    .padding(horizontal = if (compact) 20.dp else 24.dp),
             contentAlignment = Alignment.Center,
         ) {
             Text(
