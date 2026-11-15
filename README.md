@@ -27,6 +27,23 @@ Telemetry needs config. Copy `app/google-services.json.example` to `app/google-s
 ./gradlew ktlintCheck lintPlayDebug testPlayDebugUnitTest
 ```
 
+## Verify telemetry
+
+With `app/google-services.json` in place:
+
+```sh
+adb install -r app/build/outputs/apk/play/debug/app-play-debug.apk
+adb shell setprop debug.firebase.analytics.app dev.reclaim.app
+adb shell am start -n dev.reclaim.app/.MainActivity
+
+# A crash, for Crashlytics. The component is explicit because HyperOS drops
+# implicit broadcasts from the shell.
+adb shell am broadcast -n dev.reclaim.app/.debug.DebugCrashReceiver -a dev.reclaim.app.DEBUG_CRASH
+```
+
+Analytics DebugView and Crashlytics both update within a minute. Release builds
+send nothing until the user opts in.
+
 ## Privacy
 
 Analytics and crash reports are off until the user opts in. No names, package names, domains, URLs, page content, or notification content ever leave the device. See `IMPLEMENTATION_PLAN.md` section 7.

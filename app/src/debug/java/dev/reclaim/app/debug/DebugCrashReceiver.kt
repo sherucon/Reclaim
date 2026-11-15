@@ -8,7 +8,10 @@ import dev.reclaim.app.ReclaimApplication
 /**
  * Debug builds only, so Crashlytics can be verified end to end:
  *
- * adb shell am broadcast -a dev.reclaim.app.DEBUG_CRASH
+ * adb shell am broadcast -n dev.reclaim.app/.debug.DebugCrashReceiver -a dev.reclaim.app.DEBUG_CRASH
+ *
+ * The intent component is explicit on purpose. HyperOS silently drops implicit
+ * broadcasts from shell to manifest receivers, so the action alone does nothing.
  */
 class DebugCrashReceiver : BroadcastReceiver() {
     override fun onReceive(
