@@ -39,7 +39,8 @@ fun FloatingDock(
         onSelect = onSelect,
         itemHeight = 48.dp,
         modifier = modifier.width(DockWidth),
-        trackColor = ReclaimColors.CanvasRaised,
+        // Glass only on the dock. The segmented control stays opaque.
+        trackColor = ReclaimColors.Surface.copy(alpha = 0.74f),
         onScrub = onScrub,
         itemContent = { index, selected ->
             val accent = LocalSectionAccent.current

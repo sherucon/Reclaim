@@ -1,8 +1,11 @@
 package dev.reclaim.app.ui.nav
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -13,9 +16,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.LilacSection
 import dev.reclaim.app.design.LocalSectionAccent
 import dev.reclaim.app.design.PeachSection
+import dev.reclaim.app.design.ReclaimColors
 import dev.reclaim.app.design.SageSection
 import dev.reclaim.app.design.SectionAccent
 import dev.reclaim.app.design.SkySection
@@ -59,6 +66,20 @@ fun ReclaimApp() {
                     ReclaimDestination.WEB -> WebBlockerScreen()
                 }
             }
+
+            // Content fades out before it reaches the glass dock, so the bar
+            // shows shapes rather than readable text through it.
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .height(168.dp)
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color.Transparent, ReclaimColors.Canvas.copy(alpha = 0.9f)),
+                        ),
+                    ),
+            )
 
             FloatingDock(
                 items = ReclaimDestination.entries.map { DockItem(icon = it.icon, label = it.label) },

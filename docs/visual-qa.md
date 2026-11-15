@@ -34,6 +34,7 @@ Roborazzi goldens in `app/src/test/screenshots`.
 | Toggles and the sensitivity control read as flat stickers on the page. | Both sit in a shallow recess: a 6 percent warm inner shade, a top inner shadow, and a raised white thumb or pill. The segmented control is draggable as well as tappable. |
 | Every switch stayed sage green, even on the lilac and sky tabs. | Controls read the tab accent from a composition local: switch on-state, checks, day chips, selected segment label, and the active dock icon all follow the section. Neutral chrome stays neutral so color still means "on". |
 | The tab bar and the sensitivity control were two different components with two different drag behaviors. | Both are one `SegmentedTrack`: one sliding pill, one drag gesture, one inset treatment. |
+| The dock was fully opaque, so scrolling content vanished behind a solid bar. | The dock alone is glass at 74 percent white, with a 168 dp canvas scrim behind it. Content fades as it passes under, shapes show through, and the labels stay readable. |
 
 ## Known gaps, by phase
 

@@ -894,6 +894,10 @@ The section color is the page, not the card. Each tab paints a soft wash behind 
 - The wash covers the top third and is fully transparent by 78 percent of the height, so content always sits on calm space.
 - Never more than one wash on screen, and never a wash behind a card's body text.
 
+Glass:
+
+The dock is the one translucent surface in the app, at 74 percent white, and it is the only place transparency is allowed. A 168 dp canvas scrim sits behind it so content dissolves before it slides under the bar, which keeps the icons readable while shapes still show through.
+
 Control color:
 
 Active controls inherit the tab's accent, so nothing stays green on a lilac page. A switch that is on, a selected check, a filled day chip, the selected segment label, and the active dock icon all use the section's deep tone. Neutral chrome (track recesses, secondary buttons, the dock capsule) stays neutral so the accent still means "on".
@@ -959,7 +963,7 @@ Every screen composes these primitives:
 | `MiniBarChart` | 7 rounded bars, no axes, no gridlines, soft pastel fills |
 | `CircularCheck` | Selectable circular check that fills with the section accent |
 | `IconBubble` | 36-40 dp pastel circle holding a 20-24 dp solid icon |
-| `FloatingDock` | The same segmented track with 4 icon cells; tap or drag across it to change tabs |
+| `FloatingDock` | The same segmented track with 4 icon cells, in translucent glass; tap or drag across it to change tabs |
 | `PermissionCard` | Service name, benefit line, status pill, and action button |
 | `StatPill` | Tiny icon plus number, used inside cards and charts |
 | `ScreenScaffold` | Canvas background, safe insets, optional floating dock, standard header |
