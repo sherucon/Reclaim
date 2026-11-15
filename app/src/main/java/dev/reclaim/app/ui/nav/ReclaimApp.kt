@@ -1,5 +1,7 @@
 package dev.reclaim.app.ui.nav
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -44,7 +46,9 @@ fun ReclaimApp() {
     val destinations = ReclaimDestination.entries
     val pagerState = rememberPagerState(pageCount = { destinations.size })
     val scope = rememberCoroutineScope()
+    // Colour changes ride along with the page motion instead of arriving after it.
     val accent = accentFor(destinations[pagerState.currentPage])
+    val dockPosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
 
     CompositionLocalProvider(LocalSectionAccent provides accent) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -56,7 +60,12 @@ fun ReclaimApp() {
                 key = { destinations[it].route },
             ) { page ->
                 val onNavigate: (ReclaimDestination) -> Unit = { target ->
-                    scope.launch { pagerState.animateScrollToPage(target.ordinal) }
+                    scope.launch {
+                        pagerState.animateScrollToPage(
+                            page = target.ordinal,
+                            animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
+                        )
+                    }
                 }
 
                 when (destinations[page]) {
@@ -84,7 +93,15 @@ fun ReclaimApp() {
             FloatingDock(
                 items = ReclaimDestination.entries.map { DockItem(icon = it.icon, label = it.label) },
                 selectedIndex = pagerState.currentPage,
-                onSelect = { index -> scope.launch { pagerState.animateScrollToPage(index) } },
+                onSelect = { index ->
+                    scope.launch {
+                        pagerState.animateScrollToPage(
+                            page = index,
+                            animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
+                        )
+                    }
+                },
+                position = dockPosition,
                 onScrub = { index -> scope.launch { pagerState.scrollToPage(index) } },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

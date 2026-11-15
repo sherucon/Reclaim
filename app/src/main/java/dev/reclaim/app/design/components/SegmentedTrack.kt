@@ -52,6 +52,7 @@ fun SegmentedTrack(
     modifier: Modifier = Modifier,
     trackColor: Color = ReclaimColors.Recess,
     onScrub: ((Int) -> Unit)? = null,
+    position: Float? = null,
     itemContent: @Composable (index: Int, selected: Boolean) -> Unit,
 ) {
     val density = LocalDensity.current
@@ -75,11 +76,17 @@ fun SegmentedTrack(
         val cellWidth = (maxWidth - TrackGap * (count - 1)) / count
         val stepPx = with(density) { (cellWidth + TrackGap).toPx() }
 
-        val indicatorOffset by animateDpAsState(
+        val animatedOffset by animateDpAsState(
             targetValue = (cellWidth + TrackGap) * selectedIndex,
             animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
             label = "trackIndicator",
         )
+        // A pager-linked track follows the finger; a standalone one animates on tap.
+        val indicatorOffset = if (position != null) {
+            (cellWidth + TrackGap) * position.coerceIn(0f, (count - 1).toFloat())
+        } else {
+            animatedOffset
+        }
 
         Box(
             modifier = Modifier

@@ -1008,8 +1008,8 @@ Usage rules:
 
 ### 5.8 Motion
 
-- Tab change by dock tap: the pages glide, and the wash falls from one third above the screen over 520 ms while fading in; the old wash fades out over 320 ms.
-- Tab change by drag: the pages follow the finger, the wash swaps when the new page becomes current, and the dock highlight crossfades over 160 ms.
+- Tab change: one motion. The page glides 420 ms on an eased curve, the wash crossfades 340 ms with a five percent rise, and the dock capsule tracks the pager position continuously instead of stepping at the halfway mark. Nothing starts after the page has already landed.
+- Tab change by drag: the pages follow the finger, the capsule sits under the finger, and the wash starts changing exactly when the new page becomes current.
 - Insets: the toggle track and the segmented track carry a top inner shadow and a raised thumb or pill, so the controls read as recessed into the page.
 - Standard enter transition: fade plus 16 dp upward slide, 260 ms, spring damping 0.85.
 - Onboarding step transition: fade plus 24 dp horizontal slide.

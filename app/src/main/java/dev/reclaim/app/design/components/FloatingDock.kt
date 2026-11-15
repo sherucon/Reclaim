@@ -4,10 +4,12 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.LocalSectionAccent
@@ -32,16 +34,25 @@ fun FloatingDock(
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onScrub: ((Int) -> Unit)? = null,
+    position: Float? = null,
 ) {
     SegmentedTrack(
         count = items.size,
         selectedIndex = selectedIndex,
         onSelect = onSelect,
         itemHeight = 48.dp,
-        modifier = modifier.width(DockWidth),
+        modifier = modifier
+            .width(DockWidth)
+            .shadow(
+                elevation = 12.dp,
+                shape = CircleShape,
+                ambientColor = ReclaimColors.Shadow,
+                spotColor = ReclaimColors.Shadow,
+            ),
         // Glass only on the dock. The segmented control stays opaque.
         trackColor = ReclaimColors.Surface.copy(alpha = 0.74f),
         onScrub = onScrub,
+        position = position,
         itemContent = { index, selected ->
             val accent = LocalSectionAccent.current
             val tint by animateColorAsState(
