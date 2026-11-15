@@ -1,5 +1,9 @@
 package dev.reclaim.app.ui.nav
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
@@ -36,15 +40,24 @@ fun ReclaimApp() {
         }
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = ReclaimDestination.HOME.route,
-        modifier = Modifier.fillMaxSize(),
-    ) {
-        composable(ReclaimDestination.HOME.route) { HomeScreen(onNavigate = navigate) }
-        composable(ReclaimDestination.APPS.route) { AppsScreen(onNavigate = navigate) }
-        composable(ReclaimDestination.REELS.route) { ReelsScreen(onNavigate = navigate) }
-        composable(ReclaimDestination.WEB.route) { WebBlockerScreen(onNavigate = navigate) }
+    Box(modifier = Modifier.fillMaxSize()) {
+        ReclaimBackdrop(destination = current)
+
+        NavHost(
+            navController = navController,
+            startDestination = ReclaimDestination.HOME.route,
+            modifier = Modifier.fillMaxSize(),
+            // Quick swap so the falling wash is the only thing the eye follows.
+            enterTransition = { fadeIn(animationSpec = tween(durationMillis = 240, delayMillis = 40)) },
+            exitTransition = { fadeOut(animationSpec = tween(durationMillis = 150)) },
+            popEnterTransition = { fadeIn(animationSpec = tween(durationMillis = 240)) },
+            popExitTransition = { fadeOut(animationSpec = tween(durationMillis = 150)) },
+        ) {
+            composable(ReclaimDestination.HOME.route) { HomeScreen(onNavigate = navigate) }
+            composable(ReclaimDestination.APPS.route) { AppsScreen(onNavigate = navigate) }
+            composable(ReclaimDestination.REELS.route) { ReelsScreen(onNavigate = navigate) }
+            composable(ReclaimDestination.WEB.route) { WebBlockerScreen(onNavigate = navigate) }
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -24,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
-import dev.reclaim.app.design.ReclaimGradients
 import dev.reclaim.app.design.ReclaimTheme
 import dev.reclaim.app.design.Space
 import dev.reclaim.app.design.components.CircularCheck
@@ -36,6 +36,7 @@ import dev.reclaim.app.design.components.ScreenScaffold
 import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.domain.model.Platform
+import dev.reclaim.app.ui.nav.ReclaimBackdrop
 import dev.reclaim.app.ui.nav.ReclaimDestination
 import dev.reclaim.app.ui.nav.ReclaimDock
 import java.time.DayOfWeek
@@ -129,12 +130,12 @@ private fun DowntimeCard(
     days: Set<DayOfWeek>,
     onDayToggle: (DayOfWeek) -> Unit,
 ) {
-    SoftCard(brush = ReclaimGradients.Dawn) {
+    SoftCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconBubble(
                 icon = ReclaimIcons.Moon,
                 tint = ReclaimColors.Butter.Deep,
-                background = ReclaimColors.Surface.copy(alpha = 0.72f),
+                background = ReclaimColors.Butter.Soft,
             )
             Spacer(Modifier.width(Space.md))
             Column(modifier = Modifier.weight(1f)) {
@@ -237,6 +238,9 @@ private fun BlockedAppsCard(
 @Composable
 private fun AppsPreview() {
     ReclaimTheme {
-        AppsScreen(onNavigate = {})
+        Box(Modifier.fillMaxSize()) {
+            ReclaimBackdrop(ReclaimDestination.APPS)
+            AppsScreen(onNavigate = {})
+        }
     }
 }

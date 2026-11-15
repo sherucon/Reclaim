@@ -112,7 +112,7 @@ It explicitly excludes feature 4 (billing/subscriptions) and feature 6 (kid/pare
 | D11 | Crash reporting consent | Follows the same analytics toggle | One clear privacy switch is easier to understand than three. |
 | D12 | Theme | Light-only in v1 | Protects the off-white aesthetic and reduces polish surface. |
 | D13 | Typography | Plus Jakarta Sans (SIL OFL) | Friendly geometric sans that matches the reference mood without licensing cost. |
-| D14 | Icon system | Lucide, 1.75 dp stroke, 24 dp glyphs | Consistent, soft, rounded character across the app. |
+| D14 | Icon system | Heroicons solid, 24 dp glyphs | Filled shapes hold up inside pastel circles and need no stroke tuning. |
 | D15 | Mascot | None | The app carries personality through type, color, and object illustrations, without a character to maintain. |
 | D16 | Distribution | Google Play first, GitHub Releases as backup | Play needs declarations for accessibility, VPN, and foreground services. |
 | D17 | Play target audience | 13+ | A social media control app is not a children's app. |
@@ -886,12 +886,20 @@ Pastel accents:
 | `lilac` | `#E6DFF4` | `#6B5A93` |
 | `blush` | `#F6DDE3` | `#A3536A` |
 
-Gradients:
+Backdrops:
+
+The section color is the page, not the card. Each tab paints a soft wash behind the content that falls in from the top when the tab changes and fades back to the canvas before the bottom of the screen. Cards stay white and crisp on top of it.
+
+- Home: sage. Apps: butter into peach. Reels: lilac. Web: sky.
+- The wash covers the top third and is fully transparent by 78 percent of the height, so content always sits on calm space.
+- Never more than one wash on screen, and never a wash behind a card's body text.
+
+Card gradients:
 
 - `sunrise`: peach, blush, lilac, and sky at soft stops, used for onboarding heroes and celebratory cards.
 - `sageMist`: canvas to sage, used for the Protection hero card and success states.
 - `dawn`: butter to peach, used for downtime and evening themes.
-- Gradients never span more than one card and never sit behind body text without a white inner surface.
+- There are no card gradients. Depth comes from the white surface and its shadow, and color comes from the page wash and the pastel icon circles.
 
 Sentiment mapping:
 
@@ -939,14 +947,14 @@ Every screen composes these primitives:
 
 | Component | Description |
 |---|---|
-| `SoftCard` | White rounded surface with diffuse shadow and optional pastel gradient |
+| `SoftCard` | White rounded surface with a small diffuse shadow |
 | `PillButton` | Primary black pill, secondary white pill, and pastel pill variants |
 | `PillToggle` | Custom animated toggle with soft track and white thumb |
 | `SegmentedPills` | Two to three options in a canvasRaised container with a floating white selection |
 | `StatusRing` | Circular progress with 8 dp rounded stroke and animated fill |
 | `MiniBarChart` | 7 rounded bars, no axes, no gridlines, soft pastel fills |
 | `CircularCheck` | Selectable circular check used in onboarding and app rows |
-| `IconBubble` | 36-40 dp pastel circle holding a 20-24 dp Lucide icon |
+| `IconBubble` | 36-40 dp pastel circle holding a 20-24 dp solid icon |
 | `FloatingDock` | Floating white pill navigation dock with 4 items and a soft shadow |
 | `PermissionCard` | Service name, benefit line, status pill, and action button |
 | `StatPill` | Tiny icon plus number, used inside cards and charts |
@@ -958,7 +966,7 @@ Components own their spacing and color variants so screens stay consistent.
 
 ### 5.6 Icon system
 
-- Lucide outline icons at 24 dp with a 1.75 dp stroke.
+- Heroicons solid at 24 dp, generated into vector drawables by `tools/heroicons_to_vector.py`.
 - Icons always sit in a pastel `IconBubble` when used at screen level.
 - Icons inside buttons are 18-20 dp and inherit the button text color.
 - Platform glyphs are our own simple marks or letter tiles, not official logos.
@@ -992,6 +1000,7 @@ Usage rules:
 
 ### 5.8 Motion
 
+- Tab change: the new section wash falls from one third above the screen over 520 ms while fading in, the old wash fades out over 320 ms, and the screen content swaps with a 240 ms fade so the wash is the only thing the eye follows.
 - Standard enter transition: fade plus 16 dp upward slide, 260 ms, spring damping 0.85.
 - Onboarding step transition: fade plus 24 dp horizontal slide.
 - Card press: scale to 0.98 over 120 ms.
@@ -1006,7 +1015,7 @@ Usage rules:
 #### Home
 
 - Top row: small date overline, large greeting with the local display name, settings icon in a soft circle.
-- Hero `Protection` card with a sage gradient, a large status ring showing active protections out of three, a friendly status line, and a secondary pill.
+- Hero card with a large status ring showing active protections out of three, a friendly status line, and a secondary pill.
 - `Interventions` card with a 7-day mini bar chart, total count, and two stat pills for app blocks and reels breaks.
 - Feature cards stacked: Apps (peach), Reels (lilac), Web (sky). Each has an icon bubble, title, status line, pill toggle, and chevron.
 - Sponsors slot at the very bottom: one `NativeAdCard`, collapsed to nothing when no ad is eligible.
@@ -1015,16 +1024,16 @@ Usage rules:
 #### Apps
 
 - Header with title and search pill.
-- `Downtime` hero card in a dawn gradient with start and end time, day chips, and a pill toggle.
+- `Downtime` hero card with start and end time, day chips, and a pill toggle.
 - `Blocked apps` card with selected count and a list of app rows using circular checks.
 - `Notifications` card with a soft toggle and permission state.
 - Emergency pause as a quiet text button at the bottom, never a loud action.
-- Section identity: peach icons and dusk gradient only in the downtime card.
+- Section identity: butter wash behind the page and peach icons.
 
 #### Reels
 
 - Header with title and a small `Budget` info pill.
-- Hero `Scroll budget` card in a lilac gradient with a status ring and the current sensitivity.
+- Hero `Scroll budget` card with a status ring and the current sensitivity.
 - Sensitivity segmented control with three cards, each with a tiny meter.
 - Platform toggles as a list of icon bubbles with pill toggles.
 - 7-day breaks mini chart.
@@ -1033,7 +1042,7 @@ Usage rules:
 
 #### Web Blocker
 
-- Hero status card in a sky gradient with shield illustration, VPN toggle, and "Filtering N domains".
+- Hero status card with a shield icon, the site count, and the filter toggle.
 - Category cards with pastel icons and counts.
 - Custom domains card with pill input and removable chips.
 - 7-day blocked queries mini chart.
@@ -1584,7 +1593,7 @@ Tasks:
 
 1. Build the color, type, shape, spacing, and elevation tokens.
 2. Build `SoftCard`, `PillButton`, `PillToggle`, `SegmentedPills`, `StatusRing`, `MiniBarChart`, `CircularCheck`, `IconBubble`, `FloatingDock`, `PermissionCard`, and `ScreenScaffold`.
-3. Add Lucide icons and the platform glyph set.
+3. Add the Heroicons solid set and the platform glyph set.
 4. Build the four-tab dock and the navigation host with placeholder screens.
 5. Add the offline placeholder for illustrations so layout work can proceed before art is final.
 6. Add Roborazzi screenshot tests for five components.
@@ -1901,7 +1910,7 @@ Acceptance criteria:
 - [ ] D11 crash reporting follows analytics consent
 - [ ] D12 light-only v1
 - [ ] D13 typography: Plus Jakarta Sans
-- [ ] D14 icon system: Lucide
+- [ ] D14 icon system: Heroicons solid
 - [ ] D15 no mascot
 - [ ] D16 Google Play first
 - [ ] D17 target audience 13+

@@ -1,9 +1,11 @@
 package dev.reclaim.app.ui.reels
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -19,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
-import dev.reclaim.app.design.ReclaimGradients
 import dev.reclaim.app.design.ReclaimTheme
 import dev.reclaim.app.design.Space
 import dev.reclaim.app.design.components.IconBubble
@@ -34,6 +35,7 @@ import dev.reclaim.app.design.components.StatusRing
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.domain.model.Platform
 import dev.reclaim.app.domain.model.Sensitivity
+import dev.reclaim.app.ui.nav.ReclaimBackdrop
 import dev.reclaim.app.ui.nav.ReclaimDestination
 import dev.reclaim.app.ui.nav.ReclaimDock
 
@@ -112,7 +114,7 @@ fun ReelsScreen(
 
 @Composable
 private fun BudgetCard(sensitivity: Sensitivity) {
-    SoftCard(brush = ReclaimGradients.LilacMist) {
+    SoftCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -137,7 +139,7 @@ private fun BudgetCard(sensitivity: Sensitivity) {
             StatusRing(
                 progress = sensitivity.budgetScreens / Sensitivity.RELAXED.budgetScreens,
                 ringSize = 100.dp,
-                trackColor = ReclaimColors.Surface.copy(alpha = 0.6f),
+                trackColor = ReclaimColors.CanvasRaised,
                 progressColor = ReclaimColors.Lilac.Deep,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -251,6 +253,9 @@ private fun formatScreens(screens: Float): String =
 @Composable
 private fun ReelsPreview() {
     ReclaimTheme {
-        ReelsScreen(onNavigate = {})
+        Box(Modifier.fillMaxSize()) {
+            ReclaimBackdrop(ReclaimDestination.REELS)
+            ReelsScreen(onNavigate = {})
+        }
     }
 }

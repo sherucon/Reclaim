@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
-import dev.reclaim.app.design.ReclaimGradients
 import dev.reclaim.app.design.ReclaimTheme
 import dev.reclaim.app.design.Space
 import dev.reclaim.app.design.components.IconBubble
@@ -65,7 +64,7 @@ fun WebBlockerScreen(
         )
         Spacer(Modifier.height(Space.cardGap))
         CategoryCard(
-            icon = ReclaimIcons.ShieldBan,
+            icon = ReclaimIcons.ShieldAlert,
             title = "Adult",
             detail = "42 sites",
             tint = ReclaimColors.Blush.Deep,
@@ -75,7 +74,7 @@ fun WebBlockerScreen(
         )
         Spacer(Modifier.height(Space.cardGap))
         CategoryCard(
-            icon = ReclaimIcons.Spade,
+            icon = ReclaimIcons.Banknotes,
             title = "Gambling",
             detail = "18 sites",
             tint = ReclaimColors.Lilac.Deep,
@@ -122,12 +121,12 @@ private fun FilterCard(
     enabled: Boolean,
     onEnabledChange: (Boolean) -> Unit,
 ) {
-    SoftCard(brush = ReclaimGradients.SkyMist) {
+    SoftCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconBubble(
                 icon = ReclaimIcons.Shield,
                 tint = ReclaimColors.Sky.Deep,
-                background = ReclaimColors.Surface.copy(alpha = 0.72f),
+                background = ReclaimColors.Sky.Soft,
                 size = 44.dp,
                 iconSize = 22.dp,
             )

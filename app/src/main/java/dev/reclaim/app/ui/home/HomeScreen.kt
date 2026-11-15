@@ -2,9 +2,11 @@ package dev.reclaim.app.ui.home
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -21,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
-import dev.reclaim.app.design.ReclaimGradients
 import dev.reclaim.app.design.ReclaimTheme
 import dev.reclaim.app.design.Space
 import dev.reclaim.app.design.components.CircleIconButton
@@ -37,6 +38,7 @@ import dev.reclaim.app.design.components.StatusRing
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.ui.common.rememberGreeting
 import dev.reclaim.app.ui.common.rememberTodayLine
+import dev.reclaim.app.ui.nav.ReclaimBackdrop
 import dev.reclaim.app.ui.nav.ReclaimDestination
 import dev.reclaim.app.ui.nav.ReclaimDock
 
@@ -124,7 +126,7 @@ private fun ProtectionCard(
     active: Int,
     onAdjust: () -> Unit,
 ) {
-    SoftCard(brush = ReclaimGradients.SageMist) {
+    SoftCard {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -155,7 +157,7 @@ private fun ProtectionCard(
                 progress = active / 3f,
                 ringSize = 104.dp,
                 strokeWidth = 10.dp,
-                trackColor = ReclaimColors.Surface.copy(alpha = 0.6f),
+                trackColor = ReclaimColors.CanvasRaised,
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
@@ -268,6 +270,9 @@ private fun FeatureCard(
 @Composable
 private fun HomePreview() {
     ReclaimTheme {
-        HomeScreen(onNavigate = {})
+        Box(Modifier.fillMaxSize()) {
+            ReclaimBackdrop(ReclaimDestination.HOME)
+            HomeScreen(onNavigate = {})
+        }
     }
 }
