@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -47,6 +48,7 @@ fun <T> SegmentedPills(
     modifier: Modifier = Modifier,
 ) {
     var innerWidth by remember { mutableIntStateOf(0) }
+    val interaction = remember { MutableInteractionSource() }
 
     Box(
         modifier = modifier
@@ -58,9 +60,9 @@ fun <T> SegmentedPills(
                     brush = Brush.verticalGradient(
                         colors = listOf(ReclaimColors.RecessEdge, Color.Transparent),
                         startY = 0f,
-                        endY = size.height * 0.7f,
+                        endY = size.height * 0.32f,
                     ),
-                    size = Size(size.width, size.height * 0.7f),
+                    size = Size(size.width, size.height * 0.32f),
                 )
             }.padding(4.dp),
     ) {
@@ -107,6 +109,8 @@ fun <T> SegmentedPills(
                         .background(background)
                         .selectable(
                             selected = isSelected,
+                            interactionSource = interaction,
+                            indication = null,
                             role = Role.Tab,
                             onClick = { onSelect(option) },
                         ),

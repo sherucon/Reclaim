@@ -1,12 +1,16 @@
 package dev.reclaim.app.design.components
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
@@ -14,10 +18,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -35,8 +39,9 @@ private val ItemGap = 4.dp
 private val DockPadding = 6.dp
 
 /**
- * Floating white pill navigation. Tap an item to travel, or drag across the dock
- * and the pages follow your finger.
+ * Floating white pill navigation. One capsule slides between the tabs instead of
+ * each tab growing its own. Tap an item to travel, or drag across the dock and
+ * the pages follow your finger.
  */
 @Composable
 fun FloatingDock(
@@ -50,7 +55,15 @@ fun FloatingDock(
     val stepPx = with(density) { (ItemWidth + ItemGap).toPx() }
     val paddingPx = with(density) { DockPadding.toPx() }
 
-    Row(
+    val interaction = remember { MutableInteractionSource() }
+
+    val indicatorOffset by animateDpAsState(
+        targetValue = (ItemWidth + ItemGap) * selectedIndex,
+        animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
+        label = "dockIndicator",
+    )
+
+    Box(
         modifier = modifier
             .pointerInput(items.size, onScrub) {
                 if (onScrub == null) return@pointerInput
@@ -64,39 +77,46 @@ fun FloatingDock(
             }.clip(CircleShape)
             .background(ReclaimColors.Surface)
             .padding(DockPadding),
-        horizontalArrangement = Arrangement.spacedBy(ItemGap),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        items.forEachIndexed { index, item ->
-            val selected = index == selectedIndex
-            val background by animateColorAsState(
-                targetValue = if (selected) ReclaimColors.CanvasRaised else Color.Transparent,
-                animationSpec = tween(durationMillis = 160),
-                label = "dockBackground",
-            )
-            val tint by animateColorAsState(
-                targetValue = if (selected) ReclaimColors.Ink else ReclaimColors.InkTertiary,
-                animationSpec = tween(durationMillis = 160),
-                label = "dockIcon",
-            )
-            Box(
-                modifier = Modifier
-                    .size(width = ItemWidth, height = 48.dp)
-                    .clip(CircleShape)
-                    .background(background)
-                    .selectable(
-                        selected = selected,
-                        role = Role.Tab,
-                        onClick = { onSelect(index) },
-                    ),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    painter = painterResource(item.icon),
-                    contentDescription = item.label,
-                    modifier = Modifier.size(22.dp),
-                    tint = tint,
+        Box(
+            modifier = Modifier
+                .offset(x = indicatorOffset)
+                .size(width = ItemWidth, height = 48.dp)
+                .clip(CircleShape)
+                .background(ReclaimColors.CanvasRaised),
+        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ItemGap),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            items.forEachIndexed { index, item ->
+                val selected = index == selectedIndex
+                val tint by animateColorAsState(
+                    targetValue = if (selected) ReclaimColors.Ink else ReclaimColors.InkTertiary,
+                    animationSpec = tween(durationMillis = 160),
+                    label = "dockIcon",
                 )
+                Box(
+                    modifier = Modifier
+                        .size(width = ItemWidth, height = 48.dp)
+                        .clip(CircleShape)
+                        .selectable(
+                            selected = selected,
+                            interactionSource = interaction,
+                            indication = null,
+                            role = Role.Tab,
+                            onClick = { onSelect(index) },
+                        ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        painter = painterResource(item.icon),
+                        contentDescription = item.label,
+                        modifier = Modifier.size(22.dp),
+                        tint = tint,
+                    )
+                }
             }
         }
     }

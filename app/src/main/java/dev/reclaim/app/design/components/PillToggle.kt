@@ -59,10 +59,10 @@ fun PillToggle(
                     brush = Brush.verticalGradient(
                         colors = listOf(ReclaimColors.RecessEdge, Color.Transparent),
                         startY = 0f,
-                        endY = size.height * 0.62f,
+                        endY = size.height * 0.34f,
                     ),
                     topLeft = Offset.Zero,
-                    size = Size(size.width, size.height * 0.62f),
+                    size = Size(size.width, size.height * 0.34f),
                 )
             }.toggleable(
                 value = checked,
@@ -76,7 +76,7 @@ fun PillToggle(
             modifier = Modifier
                 .offset(x = thumbOffset)
                 .size(26.dp)
-                .shadow(elevation = 3.dp, shape = CircleShape)
+                .shadow(elevation = 2.dp, shape = CircleShape)
                 .background(
                     brush = Brush.verticalGradient(
                         colors = listOf(Color.White, Color(0xFFF1EDE6)),

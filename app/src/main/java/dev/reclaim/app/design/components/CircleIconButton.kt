@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -25,13 +26,18 @@ fun CircleIconButton(
     contentDescription: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    container: Color = ReclaimColors.CanvasRaised,
+    container: Color = ReclaimColors.Surface,
     tint: Color = ReclaimColors.Ink,
 ) {
     Box(
         modifier = modifier
             .size(48.dp)
-            .clip(CircleShape)
+            .shadow(
+                elevation = 2.dp,
+                shape = CircleShape,
+                ambientColor = ReclaimColors.Shadow,
+                spotColor = ReclaimColors.Shadow,
+            ).clip(CircleShape)
             .background(container)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,

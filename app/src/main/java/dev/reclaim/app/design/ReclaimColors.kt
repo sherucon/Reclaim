@@ -22,7 +22,7 @@ object ReclaimColors {
 
     /** Warm recess for inset controls, so they read the same on canvas or a wash. */
     val Recess = Color(0x0F1F1B16)
-    val RecessEdge = Color(0x1F1F1B16)
+    val RecessEdge = Color(0x141F1B16)
 
     object Sage {
         val Soft = Color(0xFFDDEBDD)
