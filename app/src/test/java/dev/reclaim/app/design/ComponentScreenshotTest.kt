@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
+import com.github.takahirom.roborazzi.RoborazziOptions
 import com.github.takahirom.roborazzi.captureRoboImage
 import dev.reclaim.app.design.components.MiniBarChart
 import dev.reclaim.app.design.components.PillToggle
@@ -127,6 +128,13 @@ class ComponentScreenshotTest {
             }
         }
         compose.mainClock.advanceTimeBy(1_000)
-        compose.onRoot().captureRoboImage("src/test/screenshots/$name.png")
+        // Linux and macOS antialias arcs and text a little differently, so a
+        // small share of edge pixels is allowed to move.
+        compose.onRoot().captureRoboImage(
+            filePath = "src/test/screenshots/$name.png",
+            roborazziOptions = RoborazziOptions(
+                compareOptions = RoborazziOptions.CompareOptions(changeThreshold = 0.02f),
+            ),
+        )
     }
 }

@@ -51,6 +51,10 @@ Roborazzi goldens in `app/src/test/screenshots`.
 `tools/measure_rhythm.py <screenshot> [x]` walks one column and prints card runs and clean-canvas
 gaps in dp. It is how the uneven spacing above was found and confirmed fixed, rather than judged by eye.
 
+Goldens are recorded on macOS and verified on Linux CI, where antialiasing of arcs and text differs.
+`ComponentScreenshotTest` allows 2 percent of pixels to move for that reason; anything structural still fails.
+Comparison images land in `app/build/outputs/roborazzi` and are uploaded when CI fails.
+
 ## Deliberate choices that a reviewer may question
 
 - Bold display type (700) is kept against the general preference for 400 to 600. The direction in
