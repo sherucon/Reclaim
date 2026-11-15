@@ -1,0 +1,23 @@
+# Gradle
+.gradle/
+build/
+.kotlin/
+local.properties
+
+# Firebase config is per environment, never committed
+google-services.json
+
+# IDE
+.idea/
+*.iml
+captures/
+
+# macOS
+.DS_Store
+
+# Signing
+*.jks
+*.keystore
+
+# Local analysis artifacts, not part of the app
+apks/
