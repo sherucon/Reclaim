@@ -40,8 +40,9 @@ class SettingsRepository(
     private fun read(preferences: Preferences): AppSettings =
         AppSettings(
             onboardingComplete = preferences[SettingsKeys.OnboardingComplete] ?: false,
+            onboardingStep = preferences[SettingsKeys.OnboardingStep] ?: "",
             displayName = preferences[SettingsKeys.DisplayName] ?: "",
-            primaryGoal = preferences[SettingsKeys.PrimaryGoal] ?: "",
+            primaryGoals = preferences[SettingsKeys.PrimaryGoals] ?: emptySet(),
             analyticsEnabled = preferences[SettingsKeys.AnalyticsEnabled] ?: false,
             appBlockingEnabled = preferences[SettingsKeys.AppBlockingEnabled] ?: false,
             blockedPackages = preferences[SettingsKeys.BlockedPackages] ?: emptySet(),
@@ -73,8 +74,9 @@ class SettingsRepository(
         value: AppSettings,
     ) {
         preferences[SettingsKeys.OnboardingComplete] = value.onboardingComplete
+        preferences[SettingsKeys.OnboardingStep] = value.onboardingStep
         preferences[SettingsKeys.DisplayName] = value.displayName
-        preferences[SettingsKeys.PrimaryGoal] = value.primaryGoal
+        preferences[SettingsKeys.PrimaryGoals] = value.primaryGoals
         preferences[SettingsKeys.AnalyticsEnabled] = value.analyticsEnabled
         preferences[SettingsKeys.AppBlockingEnabled] = value.appBlockingEnabled
         preferences[SettingsKeys.BlockedPackages] = value.blockedPackages

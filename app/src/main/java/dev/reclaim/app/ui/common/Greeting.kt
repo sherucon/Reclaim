@@ -8,7 +8,8 @@ import java.time.LocalTime
 fun rememberGreeting(): String =
     remember {
         when (LocalTime.now().hour) {
-            in 0..11 -> "Good morning"
+            in 0..4 -> "Still up?"
+            in 5..11 -> "Good morning"
             in 12..17 -> "Good afternoon"
             else -> "Good evening"
         }

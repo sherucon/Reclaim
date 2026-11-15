@@ -53,6 +53,7 @@ private fun countWord(count: Int): String =
 @Composable
 fun HomeScreen(
     onNavigate: (ReclaimDestination) -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var appsOn by rememberSaveable { mutableStateOf(true) }
@@ -69,7 +70,7 @@ fun HomeScreen(
             CircleIconButton(
                 icon = ReclaimIcons.Settings,
                 contentDescription = "Settings",
-                onClick = { },
+                onClick = onOpenSettings,
             )
         },
     ) {
@@ -266,7 +267,7 @@ private fun FeatureCard(
 private fun HomePreview() {
     ReclaimTheme {
         SectionPreview(SageSection) {
-            HomeScreen(onNavigate = {})
+            HomeScreen(onNavigate = {}, onOpenSettings = {})
         }
     }
 }

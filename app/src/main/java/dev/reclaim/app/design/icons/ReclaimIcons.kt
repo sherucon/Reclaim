@@ -24,6 +24,7 @@ object ReclaimIcons {
     val Settings = R.drawable.ic_cog_6_tooth
     val Check = R.drawable.ic_check
     val ChevronRight = R.drawable.ic_chevron_right
+    val Back = R.drawable.ic_chevron_left
     val Shield = R.drawable.ic_shield_check
     val ShieldAlert = R.drawable.ic_shield_exclamation
     val Moon = R.drawable.ic_moon

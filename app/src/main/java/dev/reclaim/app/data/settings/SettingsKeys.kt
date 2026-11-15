@@ -8,8 +8,9 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 
 internal object SettingsKeys {
     val OnboardingComplete = booleanPreferencesKey("onboarding_complete")
+    val OnboardingStep = stringPreferencesKey("onboarding_step")
     val DisplayName = stringPreferencesKey("display_name")
-    val PrimaryGoal = stringPreferencesKey("primary_goal")
+    val PrimaryGoals = stringSetPreferencesKey("primary_goals")
     val AnalyticsEnabled = booleanPreferencesKey("analytics_enabled")
 
     val AppBlockingEnabled = booleanPreferencesKey("app_blocking_enabled")

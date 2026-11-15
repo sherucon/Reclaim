@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Reclaim</string>
+    <string name="accessibility_app_blocker_label">App blocking</string>
+    <string name="accessibility_app_blocker_description">Lets Reclaim step in when a blocked app opens. It only checks which app is on screen.</string>
+    <string name="accessibility_content_blocker_label">Reels blocking</string>
+    <string name="accessibility_content_blocker_description">Lets Reclaim notice when you are scrolling short video inside the apps you chose.</string>
+    <string name="notification_listener_label">Quiet notifications</string>
 </resources>

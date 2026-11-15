@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.LocalSectionAccent
 import dev.reclaim.app.design.ReclaimColors
@@ -76,7 +77,7 @@ fun PillToggle(
     ) {
         Box(
             modifier = Modifier
-                .offset(x = thumbOffset)
+                .offset { IntOffset(thumbOffset.roundToPx(), 0) }
                 .size(26.dp)
                 .shadow(elevation = 2.dp, shape = CircleShape)
                 .background(

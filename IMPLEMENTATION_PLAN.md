@@ -292,7 +292,8 @@ DataStore Preferences keys:
 |---|---|---|
 | `onboarding_complete` | Boolean | false |
 | `display_name` | String | empty, local only, never sent to analytics |
-| `primary_goal` | String | empty |
+| `primary_goals` | String set | empty |
+| `onboarding_step` | String | empty, the resume point |
 | `analytics_enabled` | Boolean | false |
 | `app_blocking_enabled` | Boolean | false |
 | `blocked_packages` | String set | empty |
@@ -1147,7 +1148,7 @@ Every step is a full-screen page with a back chevron, progress dots, an optional
 | 2 | `name` | "What should we call you?" | Text input, optional | Local display name | `step_completed` with code `named` or `skipped` |
 | 3 | `apps` | "Which apps pull you in?" | Multi-select platform cards | Pre-select blocked apps and reels platforms | `step_completed` with selected count bucket |
 | 4 | `struggle` | "Where does it hit hardest?" | Multi-select cards: endless scrolling, notifications, opening apps, websites | Chooses feature emphasis and default web categories | `step_completed` with option codes |
-| 5 | `downtime` | "When should we protect your evenings?" | Schedule card: sunset preset, custom window, not now | Sets downtime and days | `step_completed` with preset code, no exact times |
+| 5 | `downtime` | "When should we protect your evenings?" | Three presets: evenings, late night, not now | Sets downtime and days | `step_completed` with preset code, no exact times |
 | 6 | `sensitivity` | "How much scrolling feels okay?" | Three illustrated cards: Gentle, Balanced, Strict | Sets scroll budget and cooldown | `step_completed` with level |
 | 7 | `app_permission` | "Let Reclaim step in when a blocked app opens." | Permission card plus system button | Enables app blocker when grant returns | `permission_prompted`, `permission_result` |
 | 8 | `content_permission` | "Let Reclaim notice when you're in Reels or Shorts." | Permission card plus system button | Enables content blocker when grant returns | Same |
@@ -1617,6 +1618,13 @@ Acceptance criteria:
 - Visual QA notes are recorded.
 
 ### Phase 3: Conversational onboarding and permissions
+
+Implementation notes:
+
+- The two accessibility services and the notification listener are registered in this phase as stubs. Registering them is what makes the permission rows real in system settings; the blocking logic lands in Phase 4 and 5.
+- Downtime offers three presets in onboarding. A custom window arrives with the Schedule screen.
+- The web step records categories but does not start the VPN, because the service does not exist until Phase 6. The Web screen owns the consent flow.
+- A small Settings screen (analytics toggle, run setup again, version) lands here so the Home gear is not a dead control and the summary's promise is true.
 
 Tasks:
 

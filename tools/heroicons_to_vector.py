@@ -16,6 +16,7 @@ ICONS = [
     "cog-6-tooth",
     "check",
     "chevron-right",
+    "chevron-left",
     "shield-check",
     "shield-exclamation",
     "moon",

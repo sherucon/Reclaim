@@ -32,6 +32,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
 
@@ -90,7 +91,7 @@ fun SegmentedTrack(
 
         Box(
             modifier = Modifier
-                .offset(x = indicatorOffset)
+                .offset { IntOffset(indicatorOffset.roundToPx(), 0) }
                 .size(width = cellWidth, height = itemHeight)
                 .shadow(elevation = 2.dp, shape = CircleShape)
                 .clip(CircleShape)

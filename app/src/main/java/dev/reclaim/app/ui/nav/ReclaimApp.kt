@@ -15,12 +15,17 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dev.reclaim.app.AppContainer
 import dev.reclaim.app.design.LilacSection
 import dev.reclaim.app.design.LocalSectionAccent
 import dev.reclaim.app.design.PeachSection
@@ -34,6 +39,7 @@ import dev.reclaim.app.design.components.FloatingDock
 import dev.reclaim.app.ui.apps.AppsScreen
 import dev.reclaim.app.ui.home.HomeScreen
 import dev.reclaim.app.ui.reels.ReelsScreen
+import dev.reclaim.app.ui.settings.SettingsScreen
 import dev.reclaim.app.ui.webblock.WebBlockerScreen
 import kotlinx.coroutines.launch
 
@@ -42,7 +48,8 @@ import kotlinx.coroutines.launch
  * dragged. The wash and every control accent follow the settled page.
  */
 @Composable
-fun ReclaimApp() {
+fun ReclaimApp(container: AppContainer) {
+    var showSettings by rememberSaveable { mutableStateOf(false) }
     val destinations = ReclaimDestination.entries
     val pagerState = rememberPagerState(pageCount = { destinations.size })
     val scope = rememberCoroutineScope()
@@ -69,7 +76,10 @@ fun ReclaimApp() {
                 }
 
                 when (destinations[page]) {
-                    ReclaimDestination.HOME -> HomeScreen(onNavigate = onNavigate)
+                    ReclaimDestination.HOME -> HomeScreen(
+                        onNavigate = onNavigate,
+                        onOpenSettings = { showSettings = true },
+                    )
                     ReclaimDestination.APPS -> AppsScreen()
                     ReclaimDestination.REELS -> ReelsScreen()
                     ReclaimDestination.WEB -> WebBlockerScreen()
@@ -108,6 +118,10 @@ fun ReclaimApp() {
                     .windowInsetsPadding(WindowInsets.navigationBars)
                     .padding(bottom = Space.lg),
             )
+
+            if (showSettings) {
+                SettingsScreen(container = container, onClose = { showSettings = false })
+            }
         }
     }
 }

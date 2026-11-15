@@ -10,8 +10,9 @@ import java.time.Instant
  */
 data class AppSettings(
     val onboardingComplete: Boolean = false,
+    val onboardingStep: String = "",
     val displayName: String = "",
-    val primaryGoal: String = "",
+    val primaryGoals: Set<String> = emptySet(),
     val analyticsEnabled: Boolean = false,
     val appBlockingEnabled: Boolean = false,
     val blockedPackages: Set<String> = emptySet(),
