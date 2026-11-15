@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import dev.reclaim.app.design.LocalSectionAccent
 import dev.reclaim.app.design.ReclaimColors
 
 /**
@@ -38,8 +39,9 @@ fun PillToggle(
     enabled: Boolean = true,
     contentDescription: String? = null,
 ) {
+    val accent = LocalSectionAccent.current
     val trackColor by animateColorAsState(
-        targetValue = if (checked) ReclaimColors.Sage.Deep else ReclaimColors.CanvasRaised,
+        targetValue = if (checked) accent.deep else ReclaimColors.CanvasRaised,
         animationSpec = tween(durationMillis = 180),
         label = "toggleTrack",
     )

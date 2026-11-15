@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.reclaim.app.design.LocalSectionAccent
 import dev.reclaim.app.design.ReclaimColors
 
 /**
@@ -30,7 +31,7 @@ fun StatusRing(
     ringSize: Dp = 116.dp,
     strokeWidth: Dp = 10.dp,
     trackColor: Color = ReclaimColors.Surface.copy(alpha = 0.55f),
-    progressColor: Color = ReclaimColors.Sage.Deep,
+    progressColor: Color = LocalSectionAccent.current.deep,
     content: @Composable () -> Unit = {},
 ) {
     val animated by animateFloatAsState(

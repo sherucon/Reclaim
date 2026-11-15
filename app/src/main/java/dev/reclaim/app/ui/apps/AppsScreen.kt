@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -24,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.reclaim.app.design.LocalSectionAccent
+import dev.reclaim.app.design.PeachSection
 import dev.reclaim.app.design.ReclaimColors
 import dev.reclaim.app.design.ReclaimTheme
 import dev.reclaim.app.design.Space
@@ -36,8 +37,7 @@ import dev.reclaim.app.design.components.ScreenScaffold
 import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.domain.model.Platform
-import dev.reclaim.app.ui.nav.ReclaimBackdrop
-import dev.reclaim.app.ui.nav.ReclaimDestination
+import dev.reclaim.app.ui.common.SectionPreview
 import java.time.DayOfWeek
 
 // Demo selection until the app picker lands with real package names.
@@ -165,8 +165,9 @@ private fun DowntimeCard(
                         .weight(1f)
                         .height(48.dp)
                         .clip(CircleShape)
-                        .background(if (selected) ReclaimColors.Ink else ReclaimColors.Surface.copy(alpha = 0.7f))
-                        .clickable { onDayToggle(day) },
+                        .background(
+                            if (selected) LocalSectionAccent.current.deep else ReclaimColors.Surface.copy(alpha = 0.7f),
+                        ).clickable { onDayToggle(day) },
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
@@ -233,8 +234,7 @@ private fun BlockedAppsCard(
 @Composable
 private fun AppsPreview() {
     ReclaimTheme {
-        Box(Modifier.fillMaxSize()) {
-            ReclaimBackdrop(ReclaimDestination.APPS)
+        SectionPreview(PeachSection) {
             AppsScreen()
         }
     }

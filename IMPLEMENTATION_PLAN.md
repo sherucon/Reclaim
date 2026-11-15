@@ -894,6 +894,10 @@ The section color is the page, not the card. Each tab paints a soft wash behind 
 - The wash covers the top third and is fully transparent by 78 percent of the height, so content always sits on calm space.
 - Never more than one wash on screen, and never a wash behind a card's body text.
 
+Control color:
+
+Active controls inherit the tab's accent, so nothing stays green on a lilac page. A switch that is on, a selected check, a filled day chip, the selected segment label, and the active dock icon all use the section's deep tone. Neutral chrome (track recesses, secondary buttons, the dock capsule) stays neutral so the accent still means "on".
+
 Card gradients:
 
 - `sunrise`: peach, blush, lilac, and sky at soft stops, used for onboarding heroes and celebratory cards.
@@ -949,13 +953,13 @@ Every screen composes these primitives:
 |---|---|
 | `SoftCard` | White rounded surface with a small diffuse shadow |
 | `PillButton` | Primary black pill, secondary white pill, and pastel pill variants |
-| `PillToggle` | Inset track with a raised thumb; 180 ms, no bounce |
-| `SegmentedPills` | Two to three options in an inset track with a raised white selection, tappable and draggable |
+| `PillToggle` | Inset track with a raised thumb; on-state takes the section accent; 180 ms, no bounce |
+| `SegmentedPills` | Two to three options in the shared segmented track, with the section accent on the selected label |
 | `StatusRing` | Circular progress with 8 dp rounded stroke and animated fill |
 | `MiniBarChart` | 7 rounded bars, no axes, no gridlines, soft pastel fills |
-| `CircularCheck` | Selectable circular check used in onboarding and app rows |
+| `CircularCheck` | Selectable circular check that fills with the section accent |
 | `IconBubble` | 36-40 dp pastel circle holding a 20-24 dp solid icon |
-| `FloatingDock` | Floating white pill navigation dock with 4 items; tap or drag across it to change tabs |
+| `FloatingDock` | The same segmented track with 4 icon cells; tap or drag across it to change tabs |
 | `PermissionCard` | Service name, benefit line, status pill, and action button |
 | `StatPill` | Tiny icon plus number, used inside cards and charts |
 | `ScreenScaffold` | Canvas background, safe insets, optional floating dock, standard header |

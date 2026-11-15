@@ -17,8 +17,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import dev.reclaim.app.design.ReclaimColors
+import dev.reclaim.app.design.SectionAccent
 
 /**
  * The section color lives behind the screen, not inside a card. Each tab has its
@@ -27,10 +27,10 @@ import dev.reclaim.app.design.ReclaimColors
  */
 @Composable
 fun ReclaimBackdrop(
-    destination: ReclaimDestination,
+    accent: SectionAccent,
     modifier: Modifier = Modifier,
 ) {
-    val stops = remember(destination) { backdropStops(destination) }
+    val stops = remember(accent) { accent.wash }
 
     AnimatedContent(
         targetState = stops,
@@ -62,27 +62,3 @@ fun ReclaimBackdrop(
         )
     }
 }
-
-private fun backdropStops(destination: ReclaimDestination): Array<Pair<Float, Color>> =
-    when (destination) {
-        ReclaimDestination.HOME -> arrayOf(
-            0f to ReclaimColors.Sage.Soft,
-            0.45f to ReclaimColors.Sage.Soft.copy(alpha = 0.35f),
-            0.78f to Color.Transparent,
-        )
-        ReclaimDestination.APPS -> arrayOf(
-            0f to ReclaimColors.Butter.Soft,
-            0.30f to ReclaimColors.Peach.Soft,
-            0.72f to Color.Transparent,
-        )
-        ReclaimDestination.REELS -> arrayOf(
-            0f to ReclaimColors.Lilac.Soft,
-            0.45f to ReclaimColors.Lilac.Soft.copy(alpha = 0.35f),
-            0.78f to Color.Transparent,
-        )
-        ReclaimDestination.WEB -> arrayOf(
-            0f to ReclaimColors.Sky.Soft,
-            0.45f to ReclaimColors.Sky.Soft.copy(alpha = 0.35f),
-            0.78f to Color.Transparent,
-        )
-    }

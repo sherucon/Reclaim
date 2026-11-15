@@ -1,11 +1,9 @@
 package dev.reclaim.app.ui.reels
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -20,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.reclaim.app.design.LilacSection
 import dev.reclaim.app.design.ReclaimColors
 import dev.reclaim.app.design.ReclaimTheme
 import dev.reclaim.app.design.Space
@@ -35,8 +34,7 @@ import dev.reclaim.app.design.components.StatusRing
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.domain.model.Platform
 import dev.reclaim.app.domain.model.Sensitivity
-import dev.reclaim.app.ui.nav.ReclaimBackdrop
-import dev.reclaim.app.ui.nav.ReclaimDestination
+import dev.reclaim.app.ui.common.SectionPreview
 
 private val DemoBreaks = listOf(1, 4, 2, 6, 3, 5, 2)
 
@@ -248,8 +246,7 @@ private fun formatScreens(screens: Float): String =
 @Composable
 private fun ReelsPreview() {
     ReclaimTheme {
-        Box(Modifier.fillMaxSize()) {
-            ReclaimBackdrop(ReclaimDestination.REELS)
+        SectionPreview(LilacSection) {
             ReelsScreen()
         }
     }

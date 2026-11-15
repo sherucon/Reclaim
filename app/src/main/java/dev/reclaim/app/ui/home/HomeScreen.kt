@@ -2,11 +2,9 @@ package dev.reclaim.app.ui.home
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -24,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
 import dev.reclaim.app.design.ReclaimTheme
+import dev.reclaim.app.design.SageSection
 import dev.reclaim.app.design.Space
 import dev.reclaim.app.design.components.CircleIconButton
 import dev.reclaim.app.design.components.IconBubble
@@ -36,8 +35,8 @@ import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.components.StatPill
 import dev.reclaim.app.design.components.StatusRing
 import dev.reclaim.app.design.icons.ReclaimIcons
+import dev.reclaim.app.ui.common.SectionPreview
 import dev.reclaim.app.ui.common.rememberGreeting
-import dev.reclaim.app.ui.nav.ReclaimBackdrop
 import dev.reclaim.app.ui.nav.ReclaimDestination
 
 // Demo values until the services feed the counters in Phase 4 and 6.
@@ -266,8 +265,7 @@ private fun FeatureCard(
 @Composable
 private fun HomePreview() {
     ReclaimTheme {
-        Box(Modifier.fillMaxSize()) {
-            ReclaimBackdrop(ReclaimDestination.HOME)
+        SectionPreview(SageSection) {
             HomeScreen(onNavigate = {})
         }
     }

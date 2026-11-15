@@ -22,6 +22,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.reclaim.app.design.LocalSectionAccent
 import dev.reclaim.app.design.ReclaimColors
 import dev.reclaim.app.design.icons.ReclaimIcons
 
@@ -37,13 +38,14 @@ fun CircularCheck(
     size: Dp = 28.dp,
     contentDescription: String? = null,
 ) {
+    val accent = LocalSectionAccent.current
     val fill by animateColorAsState(
-        targetValue = if (checked) ReclaimColors.Sage.Deep else Color.Transparent,
+        targetValue = if (checked) accent.deep else Color.Transparent,
         animationSpec = tween(durationMillis = 140),
         label = "checkFill",
     )
     val ring by animateColorAsState(
-        targetValue = if (checked) ReclaimColors.Sage.Deep else ReclaimColors.Hairline,
+        targetValue = if (checked) accent.deep else ReclaimColors.Hairline,
         animationSpec = tween(durationMillis = 140),
         label = "checkRing",
     )

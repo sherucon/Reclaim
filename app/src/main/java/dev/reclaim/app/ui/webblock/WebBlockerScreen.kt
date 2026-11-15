@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
 import dev.reclaim.app.design.ReclaimTheme
+import dev.reclaim.app.design.SkySection
 import dev.reclaim.app.design.Space
 import dev.reclaim.app.design.components.IconBubble
 import dev.reclaim.app.design.components.MiniBarChart
@@ -28,6 +29,7 @@ import dev.reclaim.app.design.components.PillToggle
 import dev.reclaim.app.design.components.ScreenScaffold
 import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.icons.ReclaimIcons
+import dev.reclaim.app.ui.common.SectionPreview
 
 private val DemoQueries = listOf(12, 28, 21, 44, 39, 52, 34)
 
@@ -226,6 +228,8 @@ private fun BlockedQueriesCard() {
 @Composable
 private fun WebPreview() {
     ReclaimTheme {
-        WebBlockerScreen()
+        SectionPreview(SkySection) {
+            WebBlockerScreen()
+        }
     }
 }
