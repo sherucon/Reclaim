@@ -24,14 +24,23 @@ Roborazzi goldens in `app/src/test/screenshots`.
 | The Home subtitle was generic. | It states the real number of active protections and updates as the switches change. |
 | The date overline shouted. | `Sunday, 15 November`, not `SUNDAY, 15 NOVEMBER`. |
 | Zero-value chart bars looked like data. | They render as a 4 dp baseline tick, visibly different from a real bar. |
+| Gaps between cards measured 8 to 27 dp because an 8 dp shadow filled the 14 dp spacers, and gradient cards faded into the canvas so their bottom edge disappeared. | Shadow drops to 4 dp, gradients end on their own tint instead of the canvas, and every card gap is 16 dp. Measured clean canvas between cards is now 8 to 10 dp, evenly. |
+| The mascot added a character to maintain and a card to explain it. | Removed. Personality comes from type, color, and object illustrations. |
+| Package names and "Detected natively" exposed internals. | Removed. Rows show the app or platform name only. |
+| Filler overlines above every page title. | Removed from Apps, Reels, and Web. Home keeps the date, which is real information. |
 
 ## Known gaps, by phase
 
-- Illustrations are placeholder glyphs until the Phase 9 art pass.
+- There is no mascot. Object illustrations are still placeholders until the Phase 9 art pass.
 - Home and feature numbers are demo values until the services feed counters in Phases 4 and 6.
 - Toggles hold local state only in this phase; persistence arrives with the ViewModels.
 - Bar and ring values animate from zero on first composition; reduced motion support lands in Phase 3.
 - Light theme only; the warm dark theme is a v1.1 item.
+
+## Measuring rhythm
+
+`tools/measure_rhythm.py <screenshot> [x]` walks one column and prints card runs and clean-canvas
+gaps in dp. It is how the uneven spacing above was found and confirmed fixed, rather than judged by eye.
 
 ## Deliberate choices that a reviewer may question
 

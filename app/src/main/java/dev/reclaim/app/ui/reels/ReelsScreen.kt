@@ -32,7 +32,6 @@ import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.components.StatPill
 import dev.reclaim.app.design.components.StatusRing
 import dev.reclaim.app.design.icons.ReclaimIcons
-import dev.reclaim.app.domain.model.DetectionStrength
 import dev.reclaim.app.domain.model.Platform
 import dev.reclaim.app.domain.model.Sensitivity
 import dev.reclaim.app.ui.nav.ReclaimDestination
@@ -52,7 +51,6 @@ fun ReelsScreen(
 
     ScreenScaffold(
         modifier = modifier,
-        overline = "Scrolling",
         title = "Reels",
         subtitle = "A budget for short video, applied where you actually scroll.",
         dock = { ReclaimDock(ReclaimDestination.REELS, onNavigate) },
@@ -68,24 +66,21 @@ fun ReelsScreen(
             label = ::sensitivityLabel,
         )
 
-        Spacer(Modifier.height(Space.section))
+        Spacer(Modifier.height(Space.cardGap))
 
         SoftCard {
             PlatformRow(
                 platform = Platform.INSTAGRAM,
-                detail = detectionLabel(Platform.INSTAGRAM),
                 checked = instagram,
                 onCheckedChange = { instagram = it },
             )
             PlatformRow(
                 platform = Platform.YOUTUBE,
-                detail = detectionLabel(Platform.YOUTUBE),
                 checked = youtube,
                 onCheckedChange = { youtube = it },
             )
             PlatformRow(
                 platform = Platform.TIKTOK,
-                detail = detectionLabel(Platform.TIKTOK),
                 checked = tiktok,
                 onCheckedChange = { tiktok = it },
             )
@@ -165,30 +160,23 @@ private fun BudgetCard(sensitivity: Sensitivity) {
 @Composable
 private fun PlatformRow(
     platform: Platform,
-    detail: String,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(60.dp),
+            .height(56.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         PlatformGlyph(platform = platform, size = 36.dp)
         Spacer(Modifier.width(Space.md))
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = platform.displayName,
-                style = MaterialTheme.typography.bodyLarge,
-                color = ReclaimColors.Ink,
-            )
-            Text(
-                text = detail,
-                style = MaterialTheme.typography.labelSmall,
-                color = ReclaimColors.InkTertiary,
-            )
-        }
+        Text(
+            text = platform.displayName,
+            style = MaterialTheme.typography.bodyLarge,
+            color = ReclaimColors.Ink,
+            modifier = Modifier.weight(1f),
+        )
         PillToggle(
             checked = checked,
             onCheckedChange = onCheckedChange,
@@ -258,13 +246,6 @@ private fun budgetDescription(sensitivity: Sensitivity): String =
 
 private fun formatScreens(screens: Float): String =
     if (screens % 1f == 0f) screens.toInt().toString() else screens.toString()
-
-private fun detectionLabel(platform: Platform): String =
-    when (platform.detection) {
-        DetectionStrength.Strong -> "Detected natively"
-        DetectionStrength.Heuristic -> "Beta detection"
-        DetectionStrength.None -> "Web only"
-    }
 
 @Preview(showBackground = true, backgroundColor = 0xFFF6F4EF)
 @Composable

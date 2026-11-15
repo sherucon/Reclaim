@@ -26,7 +26,6 @@ import dev.reclaim.app.design.ReclaimTheme
 import dev.reclaim.app.design.Space
 import dev.reclaim.app.design.components.CircleIconButton
 import dev.reclaim.app.design.components.IconBubble
-import dev.reclaim.app.design.components.MascotBubble
 import dev.reclaim.app.design.components.MiniBarChart
 import dev.reclaim.app.design.components.PillButton
 import dev.reclaim.app.design.components.PillStyle
@@ -44,6 +43,14 @@ import dev.reclaim.app.ui.nav.ReclaimDock
 // Demo values until the services feed the counters in Phase 4 and 6.
 private val DemoWeek = listOf(2, 5, 3, 8, 4, 6, 3)
 
+private fun countWord(count: Int): String =
+    when (count) {
+        0 -> "None"
+        1 -> "One"
+        2 -> "Two"
+        else -> "All three"
+    }
+
 @Composable
 fun HomeScreen(
     onNavigate: (ReclaimDestination) -> Unit,
@@ -59,7 +66,7 @@ fun HomeScreen(
         overline = rememberTodayLine(),
         title = rememberGreeting(),
         titleStyle = MaterialTheme.typography.displayLarge,
-        subtitle = "$activeProtections of three protections are on.",
+        subtitle = "${countWord(activeProtections)} of three protections are on.",
         headerActions = {
             CircleIconButton(
                 icon = ReclaimIcons.Settings,
@@ -78,7 +85,7 @@ fun HomeScreen(
 
         InterventionsCard()
 
-        Spacer(Modifier.height(Space.section))
+        Spacer(Modifier.height(Space.cardGap))
 
         FeatureCard(
             title = "Apps",
@@ -109,12 +116,6 @@ fun HomeScreen(
             checked = webOn,
             onCheckedChange = { webOn = it },
         )
-
-        Spacer(Modifier.height(Space.section))
-
-        MascotBubble(
-            message = "Your evenings are quiet from 22:00. Want to start them an hour earlier?",
-        )
     }
 }
 
@@ -126,12 +127,6 @@ private fun ProtectionCard(
     SoftCard(brush = ReclaimGradients.SageMist) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = "Protection",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = ReclaimColors.InkSecondary,
-                )
-                Spacer(Modifier.height(Space.sm))
                 Text(
                     text = if (active == 3) "Everything is on" else "Almost there",
                     style = MaterialTheme.typography.titleLarge,

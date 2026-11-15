@@ -61,7 +61,6 @@ fun AppsScreen(
 
     ScreenScaffold(
         modifier = modifier,
-        overline = "Blocking",
         title = "Apps",
         subtitle = "Choose what stays out of reach, and when.",
         dock = { ReclaimDock(ReclaimDestination.APPS, onNavigate) },
@@ -89,7 +88,7 @@ fun AppsScreen(
             },
         )
 
-        Spacer(Modifier.height(Space.section))
+        Spacer(Modifier.height(Space.cardGap))
 
         PermissionCard(
             title = "Quiet notifications",
@@ -100,7 +99,7 @@ fun AppsScreen(
             onAction = { notificationsOn = !notificationsOn },
         )
 
-        Spacer(Modifier.height(Space.section))
+        Spacer(Modifier.height(Space.cardGap))
 
         Box(
             modifier = Modifier
@@ -213,23 +212,17 @@ private fun BlockedAppsCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(52.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 PlatformGlyph(platform = platform, size = 36.dp)
                 Spacer(Modifier.width(Space.md))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = platform.displayName,
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = ReclaimColors.Ink,
-                    )
-                    Text(
-                        text = platform.packages.first(),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = ReclaimColors.InkTertiary,
-                    )
-                }
+                Text(
+                    text = platform.displayName,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = ReclaimColors.Ink,
+                    modifier = Modifier.weight(1f),
+                )
                 CircularCheck(
                     checked = platform.key in selectedKeys,
                     onClick = { onToggle(platform) },

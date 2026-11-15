@@ -113,7 +113,7 @@ It explicitly excludes feature 4 (billing/subscriptions) and feature 6 (kid/pare
 | D12 | Theme | Light-only in v1 | Protects the off-white aesthetic and reduces polish surface. |
 | D13 | Typography | Plus Jakarta Sans (SIL OFL) | Friendly geometric sans that matches the reference mood without licensing cost. |
 | D14 | Icon system | Lucide, 1.75 dp stroke, 24 dp glyphs | Consistent, soft, rounded character across the app. |
-| D15 | Mascot | Pip, an original round 3D creature | Gives the app personality without borrowing another app's character. |
+| D15 | Mascot | None | The app carries personality through type, color, and object illustrations, without a character to maintain. |
 | D16 | Distribution | Google Play first, GitHub Releases as backup | Play needs declarations for accessibility, VPN, and foreground services. |
 | D17 | Play target audience | 13+ | A social media control app is not a children's app. |
 | D18 | Platform icons | Own monochrome glyphs and letter tiles | Avoids copying trademarked logos and SocialLite assets. |
@@ -212,7 +212,6 @@ app/src/main/java/dev/reclaim/app/
     components/StatusRing.kt
     components/MiniBarChart.kt
     components/IconBubble.kt
-    components/MascotBubble.kt
     components/FloatingDock.kt
     components/PermissionCard.kt
     icons/ReclaimIcons.kt
@@ -755,13 +754,13 @@ Google's native ad policy sets the outer bounds of "it looks like part of the UI
 - No ad where a tap is likely accidental: not next to a primary CTA, not over a toggle, not under a scroll stop.
 - No simulated system UI, and no ad that could be mistaken for a Reclaim feature.
 
-House rule that follows from this: a sponsor card never contains a `PillToggle`, never uses a Pip illustration, and never borrows feature iconography. It shares surface, radius, shadow, type, and spacing, and nothing else. The label and the missing toggle keep it honest.
+House rule that follows from this: a sponsor card never contains a `PillToggle` and never borrows feature iconography. It shares surface, radius, shadow, type, and spacing, and nothing else. The label and the missing toggle keep it honest.
 
 #### Placement
 
 | Surface | Slot | Notes |
 |---|---|---|
-| Home | One, bottom of the scroll, below `Pip's tip` | The only high-traffic slot. Never above the fold. |
+| Home | One, at the bottom of the scroll | The only high-traffic slot. Never above the fold. |
 | About | One, at the bottom | Low traffic, keeps a second unit available for later measurement. |
 | Settings, Apps, Reels, Web Blocker, app picker | None | Decision screens stay clean. |
 | Onboarding | None | Setup is never monetized. |
@@ -948,7 +947,6 @@ Every screen composes these primitives:
 | `MiniBarChart` | 7 rounded bars, no axes, no gridlines, soft pastel fills |
 | `CircularCheck` | Selectable circular check used in onboarding and app rows |
 | `IconBubble` | 36-40 dp pastel circle holding a 20-24 dp Lucide icon |
-| `MascotBubble` | Pip illustration plus a short speech bubble |
 | `FloatingDock` | Floating white pill navigation dock with 4 items and a soft shadow |
 | `PermissionCard` | Service name, benefit line, status pill, and action button |
 | `StatPill` | Tiny icon plus number, used inside cards and charts |
@@ -968,21 +966,7 @@ Components own their spacing and color variants so screens stay consistent.
 
 ### 5.7 Illustration system
 
-Mascot: Pip.
-
-Pip is an original, soft, round 3D creature made of clay-like material, with tiny arms, a calm face, and a subtle sprout.
-
-Pip is a companion, never a mascot that nags or shames.
-
-Poses:
-
-- `pip_wave` for welcome and Home greeting.
-- `pip_think` for questions and tips.
-- `pip_shield` for protection and permissions.
-- `pip_moon` for downtime.
-- `pip_celebrate` for onboarding completion and streaks.
-- `pip_sleep` for empty states and quiet hours.
-- `pip_scroll` for reels budget and scroll education.
+There is no mascot and no character. Personality comes from type, color, and a small set of objects that describe what the app does.
 
 Object illustrations:
 
@@ -1003,7 +987,6 @@ Asset rules:
 Usage rules:
 
 - One hero illustration per screen maximum.
-- Small mascot reactions in cards and empty states.
 - No decorative illustrations in dense lists.
 - Illustrations never overlap text or controls.
 
@@ -1014,7 +997,6 @@ Usage rules:
 - Card press: scale to 0.98 over 120 ms.
 - Toggle: thumb and track animate over 180 ms.
 - Ring and bars animate from zero on first appearance over 600 ms.
-- Pip idles with a 4 second floating loop, 4 dp amplitude.
 - Stagger list items by 40 ms on first render only.
 - Haptics: light impact on option selection and successful permission return; no haptics on scroll.
 - Respect system reduced motion: disable loops, parallax, and long transitions.
@@ -1027,8 +1009,7 @@ Usage rules:
 - Hero `Protection` card with a sage gradient, a large status ring showing active protections out of three, a friendly status line, and a secondary pill.
 - `Interventions` card with a 7-day mini bar chart, total count, and two stat pills for app blocks and reels breaks.
 - Feature cards stacked: Apps (peach), Reels (lilac), Web (sky). Each has an icon bubble, title, status line, pill toggle, and chevron.
-- `Pip's tip` card with a small mascot and one actionable suggestion.
-- Sponsor slot at the very bottom, below `Pip's tip`: one `NativeAdCard`, collapsed to nothing when no ad is eligible.
+- Sponsors slot at the very bottom: one `NativeAdCard`, collapsed to nothing when no ad is eligible.
 - Floating dock at the bottom with Home, Apps, Reels, Web.
 
 #### Apps
@@ -1064,7 +1045,7 @@ Usage rules:
 - Minimal top bar with back, platform name, refresh, and overflow.
 - WebView fills the screen on canvas.
 - Thin loading bar in deep pastel, not a spinner overlay.
-- Error and offline states use a small Pip illustration and a pill retry.
+- Error and offline states use a short line, a small object illustration, and a pill retry.
 - Floating dock is hidden to maximize content.
 
 #### Settings
@@ -1081,12 +1062,12 @@ Usage rules:
 
 #### Block overlay
 
-- Full-screen sunrise gradient with a large Pip illustration.
+- Full-screen sunrise gradient with one calm object illustration.
 - White inner card with big title, one short explanation, and two pill buttons: "Go home" and "Open Reclaim".
 - Optional small line showing the active rule.
 - No harsh red, no countdown pressure, no shame copy.
-- For downtime, use the dawn gradient and moon Pip.
-- For reels, use the lilac gradient and scroll Pip.
+- For downtime, use the dawn gradient and the moon object.
+- For reels, use the lilac gradient and the scroll object.
 
 #### Onboarding
 
@@ -1116,7 +1097,7 @@ Deliberate deviations, because the direction in 5.1 asks for them:
 - Display type keeps weights 700 and 800. unslop prefers 400 to 600 with hierarchy from size alone; a soft premium app reads flat without a bold display face.
 - The Home greeting stays. It is part of the product's warmth, but the line under it must state something specific about the user's real state, never a generic welcome.
 - Overlines lose uppercase tracking. The date and section labels become sentence case with light tracking.
-- The Pip idle float is dropped. Illustration stays static and motion is reserved for state changes.
+- There is no mascot and no idle animation. Illustration stays static and motion is reserved for state changes.
 
 ## 6. Conversational onboarding
 
@@ -1139,7 +1120,7 @@ Deliberate deviations, because the direction in 5.1 asks for them:
 
 ### 6.3 Flow
 
-Every step is a full-screen page with a back chevron, progress dots, an optional mascot, a question, optional helper text, one input pattern, and a pinned continue button.
+Every step is a full-screen page with a back chevron, progress dots, an optional object illustration, a question, optional helper text, one input pattern, and a pinned continue button.
 
 | # | Step id | Question | Input | Personalization | Analytics |
 |---|---|---|---|---|---|
@@ -1186,7 +1167,7 @@ Adaptive rules:
 
 - Off-white canvas with a soft sunrise glow at the top, fading before the content.
 - Progress dots at the top, 6 dp each, active dot stretches into a 22 dp pill.
-- Mascot or object illustration centered above the question, 120-160 dp tall.
+- Object illustration centered above the question, 120-160 dp tall.
 - Question in display typography, maximum two lines.
 - Helper text in secondary ink, maximum two lines.
 - Options are full-width white cards with icon bubbles, title, and a circular check.
@@ -1221,7 +1202,7 @@ Adaptive rules:
 - VPN unavailable because another VPN is active: explain and allow continuing.
 - Accessibility service blocked by restricted settings: deep link to app info and instructions.
 - Large font scale: steps must scroll rather than clip.
-- Reduced motion: no mascot float, no step slide beyond a fade.
+- Reduced motion: no step slide beyond a fade.
 
 ## 7. Analytics and measurement
 
@@ -1441,8 +1422,8 @@ Data Safety form:
 
 ### 8.2 Store listing assets
 
-- App icon 512 x 512, adaptive icon, Pip face or a soft abstract mark.
-- Feature graphic 1024 x 500 with Pip and a calm protection message.
+- App icon 512 x 512, adaptive icon, a soft abstract mark from the sprout glyph.
+- Feature graphic 1024 x 500 with a calm object illustration and a short message.
 - 8 phone screenshots at 1080 x 1920 showing onboarding, Home, Apps, Reels, Web, overlay, widgets, settings.
 - Short description under 80 characters, for example "A calmer phone. Block the scroll, keep the good parts."
 - Full description with features, permissions rationale, privacy statement, and limitations.
@@ -1531,7 +1512,7 @@ reclaim/
       font/ (Plus Jakarta Sans files)
     src/main/assets/
       domains/social.txt, adult.txt, gambling.txt
-      illustrations/pip_*.webp, obj_*.webp
+      illustrations/obj_*.webp
       web/base.css
       web/instagram.js, youtube.js, x.js, reddit.js, facebook.js, tiktok.js, snapchat.js, linkedin.js
     src/test/java/dev/reclaim/app/...       (unit tests)
@@ -1602,7 +1583,7 @@ Acceptance criteria:
 Tasks:
 
 1. Build the color, type, shape, spacing, and elevation tokens.
-2. Build `SoftCard`, `PillButton`, `PillToggle`, `SegmentedPills`, `StatusRing`, `MiniBarChart`, `CircularCheck`, `IconBubble`, `MascotBubble`, `FloatingDock`, `PermissionCard`, and `ScreenScaffold`.
+2. Build `SoftCard`, `PillButton`, `PillToggle`, `SegmentedPills`, `StatusRing`, `MiniBarChart`, `CircularCheck`, `IconBubble`, `FloatingDock`, `PermissionCard`, and `ScreenScaffold`.
 3. Add Lucide icons and the platform glyph set.
 4. Build the four-tab dock and the navigation host with placeholder screens.
 5. Add the offline placeholder for illustrations so layout work can proceed before art is final.
@@ -1625,7 +1606,7 @@ Tasks:
 3. Persist answers and resume at the last incomplete step.
 4. Wire permission detection and recovery states.
 5. Add the onboarding analytics events.
-6. Add the progress dots, mascot layout, and step transitions.
+6. Add the progress dots, object illustration layout, and step transitions.
 7. Write Compose tests for branching, skip, and resume.
 
 Acceptance criteria:
@@ -1727,7 +1708,7 @@ Tasks:
 1. Build `WebPlatformScreen` and `WebViewHost` with security flags.
 2. Implement host allowlisting, auth hosts, and external-link handling.
 3. Implement back, reload, open in browser, and clear data.
-4. Implement offline and error states with Pip illustrations.
+4. Implement offline and error states with object illustrations.
 5. Write our own `base.css` and per-platform scripts.
 6. Inject on page finished and same-document navigation.
 7. Handle login flows and the fallback message.
@@ -1754,7 +1735,7 @@ Tasks:
 6. Swap to production ad unit IDs through CI configuration; keep them out of the repo.
 7. Confirm consent gating and reset analytics ID in Settings, add screen tracking through the NavController, and add `DailyStatsWorker` with a network constraint.
 8. Verify every event and every trigger in DebugView, and add Crashlytics mapping upload in release CI.
-9. Generate and polish the Pip illustrations and object set.
+9. Generate and polish the object illustration set.
 10. Run the visual QA checklist and fix every deviation.
 11. Complete Play declarations including ads, Data Safety, the privacy policy, and the store assets, and publish `app-ads.txt`.
 12. Run the pre-launch report and internal testing on both flavors.
@@ -1866,7 +1847,7 @@ Acceptance criteria:
 | AdMob policy violation or account ban | Lost revenue, release blocked | Test units in dev, labeled card, AdChoices intact, no accidental-click placement, never tap live ads yourself |
 | UMP consent missed for EEA or UK | GDPR exposure | Consent resolved before the first ad request, non-personalized fallback, Data Safety matches the implementation |
 | Ads perceived as a bait and switch | Review complaints | Disclose ads in the onboarding summary and the store listing before install |
-| 3D illustrations feel inconsistent | Premium feel breaks | One art direction doc, one generation pipeline, review every asset before check-in |
+| Object illustrations feel inconsistent | Premium feel breaks | One art direction doc, one generation pipeline, review every asset before check-in |
 | Visual scope creep | Slow build, inconsistent UI | Design tokens and shared components only, no one-off styles |
 | Light-only theme complaints | Lower satisfaction | Fast-follow warm dark theme in v1.1 |
 | Trademark or copyright complaint | Takedown | Own brand, own icons, clean-room code, no copied assets or strings |
@@ -1878,7 +1859,7 @@ Acceptance criteria:
 
 - Features 1, 2, 3, 5, and 7 work on the Redmi and at least two emulator API levels.
 - Onboarding is conversational, personalized, and completes in under two minutes.
-- The UI matches the visual system: off-white canvas, floating cards, pastel accents, Pip illustrations, and no harsh borders or default Material styling.
+- The UI matches the visual system: off-white canvas, floating cards, pastel accents, object illustrations, and no harsh borders or default Material styling.
 - Analytics is opt-in, event taxonomy is documented, and no prohibited data is sent.
 - Crashlytics reports crashes from internal builds and respects consent.
 - No billing, accounts, kid mode, backend, or unused SDKs exist in the repository.
@@ -1921,7 +1902,7 @@ Acceptance criteria:
 - [ ] D12 light-only v1
 - [ ] D13 typography: Plus Jakarta Sans
 - [ ] D14 icon system: Lucide
-- [ ] D15 mascot: Pip
+- [ ] D15 no mascot
 - [ ] D16 Google Play first
 - [ ] D17 target audience 13+
 - [ ] D18 own platform glyphs

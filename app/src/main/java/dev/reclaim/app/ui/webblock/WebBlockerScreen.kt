@@ -46,7 +46,6 @@ fun WebBlockerScreen(
 
     ScreenScaffold(
         modifier = modifier,
-        overline = "Filtering",
         title = "Web",
         subtitle = "Quiet the mobile web, in every browser on the phone.",
         dock = { ReclaimDock(ReclaimDestination.WEB, onNavigate) },
@@ -58,7 +57,7 @@ fun WebBlockerScreen(
         CategoryCard(
             icon = ReclaimIcons.Users,
             title = "Social",
-            detail = "1,180 domains",
+            detail = "1,180 sites",
             tint = ReclaimColors.Peach.Deep,
             background = ReclaimColors.Peach.Soft,
             checked = socialOn,
@@ -68,7 +67,7 @@ fun WebBlockerScreen(
         CategoryCard(
             icon = ReclaimIcons.ShieldBan,
             title = "Adult",
-            detail = "42 domains",
+            detail = "42 sites",
             tint = ReclaimColors.Blush.Deep,
             background = ReclaimColors.Blush.Soft,
             checked = adultOn,
@@ -78,14 +77,14 @@ fun WebBlockerScreen(
         CategoryCard(
             icon = ReclaimIcons.Spade,
             title = "Gambling",
-            detail = "18 domains",
+            detail = "18 sites",
             tint = ReclaimColors.Lilac.Deep,
             background = ReclaimColors.Lilac.Soft,
             checked = gamblingOn,
             onCheckedChange = { gamblingOn = it },
         )
 
-        Spacer(Modifier.height(Space.section))
+        Spacer(Modifier.height(Space.cardGap))
 
         BlockedQueriesCard()
 
@@ -107,8 +106,8 @@ fun WebBlockerScreen(
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Reclaim answers blocked domains itself and forwards everything else. " +
-                            "Private DNS and apps with their own resolver can bypass it.",
+                        text = "Reclaim blocks the sites you choose in every browser on the phone. " +
+                            "A few apps ignore the phone's settings and get around it.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = ReclaimColors.InkSecondary,
                     )
@@ -135,12 +134,12 @@ private fun FilterCard(
             Spacer(Modifier.width(Space.md))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "DNS filter",
+                    text = "Web filter",
                     style = MaterialTheme.typography.titleMedium,
                     color = ReclaimColors.Ink,
                 )
                 Text(
-                    text = if (enabled) "Filtering 1,240 domains" else "The filter is off",
+                    text = if (enabled) "1,240 sites blocked" else "The filter is off",
                     style = MaterialTheme.typography.bodyMedium,
                     color = ReclaimColors.InkSecondary,
                 )
@@ -148,7 +147,7 @@ private fun FilterCard(
             PillToggle(
                 checked = enabled,
                 onCheckedChange = onEnabledChange,
-                contentDescription = "DNS filter",
+                contentDescription = "Web filter",
             )
         }
     }
@@ -222,7 +221,7 @@ private fun BlockedQueriesCard() {
         Spacer(Modifier.height(Space.md))
         Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
             Text(
-                text = "Counted on the device. No domain name ever leaves the phone.",
+                text = "Counted on the phone. No site name ever leaves it.",
                 style = MaterialTheme.typography.labelSmall,
                 color = ReclaimColors.InkTertiary,
             )
