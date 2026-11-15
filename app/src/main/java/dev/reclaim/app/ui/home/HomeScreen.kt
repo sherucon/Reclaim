@@ -37,10 +37,8 @@ import dev.reclaim.app.design.components.StatPill
 import dev.reclaim.app.design.components.StatusRing
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.ui.common.rememberGreeting
-import dev.reclaim.app.ui.common.rememberTodayLine
 import dev.reclaim.app.ui.nav.ReclaimBackdrop
 import dev.reclaim.app.ui.nav.ReclaimDestination
-import dev.reclaim.app.ui.nav.ReclaimDock
 
 // Demo values until the services feed the counters in Phase 4 and 6.
 private val DemoWeek = listOf(2, 5, 3, 8, 4, 6, 3)
@@ -65,7 +63,6 @@ fun HomeScreen(
 
     ScreenScaffold(
         modifier = modifier,
-        overline = rememberTodayLine(),
         title = rememberGreeting(),
         titleStyle = MaterialTheme.typography.displayLarge,
         subtitle = "${countWord(activeProtections)} of three protections are on.",
@@ -76,7 +73,6 @@ fun HomeScreen(
                 onClick = { },
             )
         },
-        dock = { ReclaimDock(ReclaimDestination.HOME, onNavigate) },
     ) {
         ProtectionCard(
             active = activeProtections,

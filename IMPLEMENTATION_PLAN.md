@@ -136,7 +136,7 @@ If any default is wrong, change it before Phase 0.
 |---|---|
 | Language | Kotlin, latest stable supported by the chosen AGP |
 | UI | Jetpack Compose with Material 3 foundations, custom Reclaim component layer |
-| Navigation | Navigation Compose, single activity |
+| Navigation | Horizontal pager for the four tabs, Navigation Compose for detail screens, single activity |
 | State | ViewModel plus StateFlow, immutable UI state |
 | Persistence | DataStore Preferences for settings and local counters, no Room in v1 |
 | Dependency injection | Manual `AppContainer` created in `Application`, no Hilt |
@@ -949,13 +949,13 @@ Every screen composes these primitives:
 |---|---|
 | `SoftCard` | White rounded surface with a small diffuse shadow |
 | `PillButton` | Primary black pill, secondary white pill, and pastel pill variants |
-| `PillToggle` | Custom animated toggle with soft track and white thumb |
-| `SegmentedPills` | Two to three options in a canvasRaised container with a floating white selection |
+| `PillToggle` | Inset track with a raised thumb; 180 ms, no bounce |
+| `SegmentedPills` | Two to three options in an inset track with a raised white selection, tappable and draggable |
 | `StatusRing` | Circular progress with 8 dp rounded stroke and animated fill |
 | `MiniBarChart` | 7 rounded bars, no axes, no gridlines, soft pastel fills |
 | `CircularCheck` | Selectable circular check used in onboarding and app rows |
 | `IconBubble` | 36-40 dp pastel circle holding a 20-24 dp solid icon |
-| `FloatingDock` | Floating white pill navigation dock with 4 items and a soft shadow |
+| `FloatingDock` | Floating white pill navigation dock with 4 items; tap or drag across it to change tabs |
 | `PermissionCard` | Service name, benefit line, status pill, and action button |
 | `StatPill` | Tiny icon plus number, used inside cards and charts |
 | `ScreenScaffold` | Canvas background, safe insets, optional floating dock, standard header |
@@ -1000,7 +1000,9 @@ Usage rules:
 
 ### 5.8 Motion
 
-- Tab change: the new section wash falls from one third above the screen over 520 ms while fading in, the old wash fades out over 320 ms, and the screen content swaps with a 240 ms fade so the wash is the only thing the eye follows.
+- Tab change by dock tap: the pages glide, and the wash falls from one third above the screen over 520 ms while fading in; the old wash fades out over 320 ms.
+- Tab change by drag: the pages follow the finger, the wash swaps when the new page becomes current, and the dock highlight crossfades over 160 ms.
+- Insets: the toggle track and the segmented track carry a top inner shadow and a raised thumb or pill, so the controls read as recessed into the page.
 - Standard enter transition: fade plus 16 dp upward slide, 260 ms, spring damping 0.85.
 - Onboarding step transition: fade plus 24 dp horizontal slide.
 - Card press: scale to 0.98 over 120 ms.
@@ -1014,7 +1016,7 @@ Usage rules:
 
 #### Home
 
-- Top row: small date overline, large greeting with the local display name, settings icon in a soft circle.
+- Top row: large greeting, settings icon in a soft circle. No date line: the screen is about the day ahead, not the calendar.
 - Hero card with a large status ring showing active protections out of three, a friendly status line, and a secondary pill.
 - `Interventions` card with a 7-day mini bar chart, total count, and two stat pills for app blocks and reels breaks.
 - Feature cards stacked: Apps (peach), Reels (lilac), Web (sky). Each has an icon bubble, title, status line, pill toggle, and chevron.
@@ -1594,7 +1596,7 @@ Tasks:
 1. Build the color, type, shape, spacing, and elevation tokens.
 2. Build `SoftCard`, `PillButton`, `PillToggle`, `SegmentedPills`, `StatusRing`, `MiniBarChart`, `CircularCheck`, `IconBubble`, `FloatingDock`, `PermissionCard`, and `ScreenScaffold`.
 3. Add the Heroicons solid set and the platform glyph set.
-4. Build the four-tab dock and the navigation host with placeholder screens.
+4. Build the four-tab pager, the draggable dock, and the screens.
 5. Add the offline placeholder for illustrations so layout work can proceed before art is final.
 6. Add Roborazzi screenshot tests for five components.
 7. Audit hardcoded styles and remove them.

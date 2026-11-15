@@ -14,7 +14,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -23,7 +27,8 @@ import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
 
 /**
- * The only switch in the app. Soft track, white thumb, 180 ms, no bounce.
+ * The only switch in the app. The track sits in a shallow recess and the thumb
+ * rises out of it, so the control reads as physical without being a toy.
  */
 @Composable
 fun PillToggle(
@@ -49,7 +54,17 @@ fun PillToggle(
             .size(width = 52.dp, height = 32.dp)
             .clip(CircleShape)
             .background(trackColor)
-            .toggleable(
+            .drawBehind {
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(ReclaimColors.RecessEdge, Color.Transparent),
+                        startY = 0f,
+                        endY = size.height * 0.62f,
+                    ),
+                    topLeft = Offset.Zero,
+                    size = Size(size.width, size.height * 0.62f),
+                )
+            }.toggleable(
                 value = checked,
                 enabled = enabled,
                 role = Role.Switch,
@@ -61,8 +76,13 @@ fun PillToggle(
             modifier = Modifier
                 .offset(x = thumbOffset)
                 .size(26.dp)
-                .shadow(elevation = 2.dp, shape = CircleShape)
-                .background(Color.White, CircleShape),
+                .shadow(elevation = 3.dp, shape = CircleShape)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.White, Color(0xFFF1EDE6)),
+                    ),
+                    shape = CircleShape,
+                ),
         )
     }
 }

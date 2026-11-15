@@ -38,7 +38,6 @@ import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.domain.model.Platform
 import dev.reclaim.app.ui.nav.ReclaimBackdrop
 import dev.reclaim.app.ui.nav.ReclaimDestination
-import dev.reclaim.app.ui.nav.ReclaimDock
 import java.time.DayOfWeek
 
 // Demo selection until the app picker lands with real package names.
@@ -50,10 +49,7 @@ private val DemoApps = listOf(
 )
 
 @Composable
-fun AppsScreen(
-    onNavigate: (ReclaimDestination) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun AppsScreen(modifier: Modifier = Modifier) {
     var downtimeOn by rememberSaveable { mutableStateOf(true) }
     var notificationsOn by rememberSaveable { mutableStateOf(false) }
     var paused by rememberSaveable { mutableStateOf(false) }
@@ -64,7 +60,6 @@ fun AppsScreen(
         modifier = modifier,
         title = "Apps",
         subtitle = "Choose what stays out of reach, and when.",
-        dock = { ReclaimDock(ReclaimDestination.APPS, onNavigate) },
     ) {
         DowntimeCard(
             enabled = downtimeOn,
@@ -240,7 +235,7 @@ private fun AppsPreview() {
     ReclaimTheme {
         Box(Modifier.fillMaxSize()) {
             ReclaimBackdrop(ReclaimDestination.APPS)
-            AppsScreen(onNavigate = {})
+            AppsScreen()
         }
     }
 }

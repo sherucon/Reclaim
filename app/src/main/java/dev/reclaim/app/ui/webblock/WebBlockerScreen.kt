@@ -28,16 +28,11 @@ import dev.reclaim.app.design.components.PillToggle
 import dev.reclaim.app.design.components.ScreenScaffold
 import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.icons.ReclaimIcons
-import dev.reclaim.app.ui.nav.ReclaimDestination
-import dev.reclaim.app.ui.nav.ReclaimDock
 
 private val DemoQueries = listOf(12, 28, 21, 44, 39, 52, 34)
 
 @Composable
-fun WebBlockerScreen(
-    onNavigate: (ReclaimDestination) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun WebBlockerScreen(modifier: Modifier = Modifier) {
     var webOn by rememberSaveable { mutableStateOf(true) }
     var socialOn by rememberSaveable { mutableStateOf(true) }
     var adultOn by rememberSaveable { mutableStateOf(true) }
@@ -47,7 +42,6 @@ fun WebBlockerScreen(
         modifier = modifier,
         title = "Web",
         subtitle = "Quiet the mobile web, in every browser on the phone.",
-        dock = { ReclaimDock(ReclaimDestination.WEB, onNavigate) },
     ) {
         FilterCard(enabled = webOn, onEnabledChange = { webOn = it })
 
@@ -232,6 +226,6 @@ private fun BlockedQueriesCard() {
 @Composable
 private fun WebPreview() {
     ReclaimTheme {
-        WebBlockerScreen(onNavigate = {})
+        WebBlockerScreen()
     }
 }

@@ -37,15 +37,11 @@ import dev.reclaim.app.domain.model.Platform
 import dev.reclaim.app.domain.model.Sensitivity
 import dev.reclaim.app.ui.nav.ReclaimBackdrop
 import dev.reclaim.app.ui.nav.ReclaimDestination
-import dev.reclaim.app.ui.nav.ReclaimDock
 
 private val DemoBreaks = listOf(1, 4, 2, 6, 3, 5, 2)
 
 @Composable
-fun ReelsScreen(
-    onNavigate: (ReclaimDestination) -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun ReelsScreen(modifier: Modifier = Modifier) {
     var sensitivity by rememberSaveable { mutableStateOf(Sensitivity.BALANCED) }
     var instagram by rememberSaveable { mutableStateOf(true) }
     var youtube by rememberSaveable { mutableStateOf(true) }
@@ -55,7 +51,6 @@ fun ReelsScreen(
         modifier = modifier,
         title = "Reels",
         subtitle = "A budget for short video, applied where you actually scroll.",
-        dock = { ReclaimDock(ReclaimDestination.REELS, onNavigate) },
     ) {
         BudgetCard(sensitivity = sensitivity)
 
@@ -255,7 +250,7 @@ private fun ReelsPreview() {
     ReclaimTheme {
         Box(Modifier.fillMaxSize()) {
             ReclaimBackdrop(ReclaimDestination.REELS)
-            ReelsScreen(onNavigate = {})
+            ReelsScreen()
         }
     }
 }

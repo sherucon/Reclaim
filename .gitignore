@@ -21,3 +21,7 @@ captures/
 
 # Local analysis artifacts, not part of the app
 apks/
+
+# Python tooling
+__pycache__/
+*.pyc

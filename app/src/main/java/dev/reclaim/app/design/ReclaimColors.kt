@@ -20,6 +20,10 @@ object ReclaimColors {
     val InkTertiary = Color(0xFF9A9186)
     val Shadow = Color(0xFF3A3226)
 
+    /** Warm recess for inset controls, so they read the same on canvas or a wash. */
+    val Recess = Color(0x0F1F1B16)
+    val RecessEdge = Color(0x1F1F1B16)
+
     object Sage {
         val Soft = Color(0xFFDDEBDD)
         val Tint = Color(0xFFF4F8F4)

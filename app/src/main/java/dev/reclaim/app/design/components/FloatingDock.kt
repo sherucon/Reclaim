@@ -1,6 +1,9 @@
 package dev.reclaim.app.design.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -10,10 +13,13 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -24,9 +30,13 @@ data class DockItem(
     val label: String,
 )
 
+private val ItemWidth = 64.dp
+private val ItemGap = 4.dp
+private val DockPadding = 6.dp
+
 /**
- * Floating white pill navigation. The active item gets a quiet surface step,
- * not a color fill.
+ * Floating white pill navigation. Tap an item to travel, or drag across the dock
+ * and the pages follow your finger.
  */
 @Composable
 fun FloatingDock(
@@ -34,24 +44,47 @@ fun FloatingDock(
     selectedIndex: Int,
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    onScrub: ((Int) -> Unit)? = null,
 ) {
+    val density = LocalDensity.current
+    val stepPx = with(density) { (ItemWidth + ItemGap).toPx() }
+    val paddingPx = with(density) { DockPadding.toPx() }
+
     Row(
         modifier = modifier
-            .clip(CircleShape)
+            .pointerInput(items.size, onScrub) {
+                if (onScrub == null) return@pointerInput
+
+                fun indexAt(x: Float): Int = ((x - paddingPx) / stepPx).toInt().coerceIn(0, items.lastIndex)
+
+                detectHorizontalDragGestures(
+                    onDragStart = { offset -> onScrub(indexAt(offset.x)) },
+                    onHorizontalDrag = { change, _ -> onScrub(indexAt(change.position.x)) },
+                )
+            }.clip(CircleShape)
             .background(ReclaimColors.Surface)
-            .padding(6.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+            .padding(DockPadding),
+        horizontalArrangement = Arrangement.spacedBy(ItemGap),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         items.forEachIndexed { index, item ->
             val selected = index == selectedIndex
+            val background by animateColorAsState(
+                targetValue = if (selected) ReclaimColors.CanvasRaised else Color.Transparent,
+                animationSpec = tween(durationMillis = 160),
+                label = "dockBackground",
+            )
+            val tint by animateColorAsState(
+                targetValue = if (selected) ReclaimColors.Ink else ReclaimColors.InkTertiary,
+                animationSpec = tween(durationMillis = 160),
+                label = "dockIcon",
+            )
             Box(
                 modifier = Modifier
-                    .size(width = 64.dp, height = 48.dp)
+                    .size(width = ItemWidth, height = 48.dp)
                     .clip(CircleShape)
-                    .background(
-                        if (selected) ReclaimColors.CanvasRaised else Color.Transparent,
-                    ).selectable(
+                    .background(background)
+                    .selectable(
                         selected = selected,
                         role = Role.Tab,
                         onClick = { onSelect(index) },
@@ -62,7 +95,7 @@ fun FloatingDock(
                     painter = painterResource(item.icon),
                     contentDescription = item.label,
                     modifier = Modifier.size(22.dp),
-                    tint = if (selected) ReclaimColors.Ink else ReclaimColors.InkTertiary,
+                    tint = tint,
                 )
             }
         }
