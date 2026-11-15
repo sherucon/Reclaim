@@ -124,6 +124,7 @@ It explicitly excludes feature 4 (billing/subscriptions) and feature 6 (kid/pare
 | D23 | Build flavors | `play` (Firebase, AdMob, UMP) and `libre` (NoOp, no proprietary SDKs) | Keeps the open-source build clean and F-Droid viable. |
 | D24 | Paid ad removal | Not in v1 | Billing stays out of scope; the answer to ad fatigue is strict caps, not a paywall. |
 | D25 | Ads during development | Google test ad units only until Phase 9; production units injected by CI | Tapping your own live ads is invalid traffic and can get the AdMob account banned. |
+| D26 | Design review | unslop checklist, adapted, bold display type kept | Adds a proven craft pass without flattening the direction into a neutral template. |
 
 If any default is wrong, change it before Phase 0.
 
@@ -1104,6 +1105,19 @@ Usage rules:
 - Reduced motion check.
 - Illustration weight check in the release APK.
 
+### 5.11 Slop audit
+
+Every screen gets reviewed against the [unslop](https://github.com/heydamir/unslop) checklist (Damir Sokolovsky, CC BY 4.0), adapted for Compose and for this direction. The credit lives in the README.
+
+Adopted as written: 4px spacing grid, one tinted neutral ramp, three text roles, one accent per screen, hairlines at 6 to 10 percent ink, one icon set at one size and stroke, no emoji in the interface, nested radii, short labels with no trailing period, no exclamation marks, no hype words, tabular figures, one easing curve, no looping motion, and nothing that animates layout properties.
+
+Deliberate deviations, because the direction in 5.1 asks for them:
+
+- Display type keeps weights 700 and 800. unslop prefers 400 to 600 with hierarchy from size alone; a soft premium app reads flat without a bold display face.
+- The Home greeting stays. It is part of the product's warmth, but the line under it must state something specific about the user's real state, never a generic welcome.
+- Overlines lose uppercase tracking. The date and section labels become sentence case with light tracking.
+- The Pip idle float is dropped. Illustration stays static and motion is reserved for state changes.
+
 ## 6. Conversational onboarding
 
 ### 6.1 Goals
@@ -1398,6 +1412,14 @@ Data Safety form:
 - Ads data is collected and used by Google AdMob as a third party for advertising; this is declared as sharing with Google.
 - Analytics and crash data are optional because they need opt-in. Ads data is not optional because the app is free and ad-funded, but personalization is optional through UMP.
 - Deletion paths: reset the analytics ID in Settings, reset the system advertising ID, or email for the rest.
+
+### 7.10 Counting users
+
+- Active users, new users, sessions, retention, and the per-version and per-country breakdowns come from Firebase Analytics. GA4 counts a user as an app instance that opened the app and sent at least one event.
+- Because analytics is opt-in, that number is a floor, not a headcount. A user who declines consent is invisible by design.
+- Absolute installs, uninstalls, and store conversion come from Play Console, which is not consent gated.
+- Read GA4 for behaviour and trends, Play Console for install totals, and never present the GA4 figure as "total users".
+- No user ID is sent, so an app instance is the unit. A reinstall counts as a new user, and one person on two devices counts as two.
 
 ## 8. Google Play launch
 
@@ -1910,6 +1932,7 @@ Acceptance criteria:
 - [ ] D23 build flavors: `play` and `libre`
 - [ ] D24 no paid ad removal in v1
 - [ ] D25 test ad units until Phase 9
+- [ ] D26 design review uses the adapted unslop checklist
 - [ ] Plan approved to start Phase 0
 
 Reply with approvals or changes, and implementation begins with Phase 0.
