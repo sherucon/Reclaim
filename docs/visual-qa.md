@@ -19,7 +19,7 @@ Roborazzi goldens in `app/src/test/screenshots`.
 |---|---|
 | The secondary pill was nearly invisible on white cards (`SurfaceMuted` on `Surface`). | The secondary style uses `CanvasRaised`, which reads as a control without a border. |
 | Uppercase tracked overlines read like template badges. | Sentence case with light tracking, per the unslop adaptation in the plan. |
-| The variable font ignored every weight; all text rendered regular. | Five static Plus Jakarta weights are bundled and mapped to 400 to 800. |
+| The variable font ignored every weight; all text rendered regular. | Static PT Serif Regular and Bold are bundled, and the scale's five weights resolve to those two. |
 | The Pip idle float was motion without meaning. | Removed. Illustration is static and motion is reserved for state changes. |
 | The Home subtitle was generic. | It states the real number of active protections and updates as the switches change. |
 | The date overline shouted. | `Sunday, 15 November`, not `SUNDAY, 15 NOVEMBER`. |

@@ -111,7 +111,7 @@ It explicitly excludes feature 4 (billing/subscriptions) and feature 6 (kid/pare
 | D10 | Analytics consent | Explicit opt-in, default off, in onboarding and Settings | Satisfies GDPR/ePrivacy and keeps Data Safety honest. |
 | D11 | Crash reporting consent | Follows the same analytics toggle | One clear privacy switch is easier to understand than three. |
 | D12 | Theme | Light-only in v1 | Protects the off-white aesthetic and reduces polish surface. |
-| D13 | Typography | Plus Jakarta Sans (SIL OFL) | Friendly geometric sans that matches the reference mood without licensing cost. |
+| D13 | Typography | PT Serif (SIL OFL) | Editorial serif with a printed-page calm that matches the reference mood without licensing cost. |
 | D14 | Icon system | Font Awesome Free (Solid), 24 dp glyphs | One font carries every icon; filled shapes hold up inside pastel circles and need no stroke tuning. |
 | D15 | Mascot | None | The app carries personality through type, color, and object illustrations, without a character to maintain. |
 | D16 | Distribution | Google Play first, GitHub Releases as backup | Play needs declarations for accessibility, VPN, and foreground services. |
@@ -921,9 +921,10 @@ Sentiment mapping:
 
 ### 5.3 Typography
 
-- Family: Plus Jakarta Sans, bundled, SIL OFL.
-- Weights: 400, 500, 600, 700, 800.
+- Family: PT Serif, bundled, SIL OFL.
+- Weights: 400 and 700; the scale maps 500 to regular and 600 to bold.
 - Display: 32-34 sp, line height 38-40, weight 700, tracking -0.5.
+- Onboarding hero: 36 sp, line height 44, weight 400.
 - Screen title: 28 sp, line height 34, weight 700.
 - Section title: 20 sp, line height 26, weight 700.
 - Card title: 17 sp, line height 22, weight 600.
@@ -1529,7 +1530,7 @@ reclaim/
       xml/widget_info_*.xml
       values/strings.xml, themes.xml, colors.xml
       drawable/ (own vector glyphs)
-      font/ (Plus Jakarta Sans files)
+      font/ (PT Serif files)
     src/main/assets/
       domains/social.txt, adult.txt, gambling.txt
       illustrations/obj_*.webp
@@ -1927,7 +1928,7 @@ Acceptance criteria:
 - [ ] D10 analytics consent: opt-in, default off
 - [ ] D11 crash reporting follows analytics consent
 - [ ] D12 light-only v1
-- [ ] D13 typography: Plus Jakarta Sans
+- [ ] D13 typography: PT Serif
 - [ ] D14 icon system: Font Awesome Free solid
 - [ ] D15 no mascot
 - [ ] D16 Google Play first

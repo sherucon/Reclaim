@@ -9,11 +9,10 @@ import androidx.compose.ui.unit.sp
 import dev.reclaim.app.R
 
 val ReclaimFontFamily = FontFamily(
-    Font(R.font.plus_jakarta_regular, FontWeight.W400),
-    Font(R.font.plus_jakarta_medium, FontWeight.W500),
-    Font(R.font.plus_jakarta_semibold, FontWeight.W600),
-    Font(R.font.plus_jakarta_bold, FontWeight.W700),
-    Font(R.font.plus_jakarta_extrabold, FontWeight.W800),
+    // PT Serif ships Regular and Bold only; the matcher sends W500 to regular
+    // and W600/W700 to bold, so nothing is synthetically emboldened.
+    Font(R.font.pt_serif_regular, FontWeight.W400),
+    Font(R.font.pt_serif_bold, FontWeight.W700),
 )
 
 val ReclaimTypography = Typography(
@@ -23,6 +22,12 @@ val ReclaimTypography = Typography(
         fontSize = 34.sp,
         lineHeight = 40.sp,
         letterSpacing = (-0.5).sp,
+    ),
+    displaySmall = TextStyle(
+        fontFamily = ReclaimFontFamily,
+        fontWeight = FontWeight.W400,
+        fontSize = 36.sp,
+        lineHeight = 44.sp,
     ),
     headlineLarge = TextStyle(
         fontFamily = ReclaimFontFamily,
