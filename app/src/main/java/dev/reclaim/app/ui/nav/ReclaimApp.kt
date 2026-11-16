@@ -53,9 +53,9 @@ fun ReclaimApp(container: AppContainer) {
     val destinations = ReclaimDestination.entries
     val pagerState = rememberPagerState(pageCount = { destinations.size })
     val scope = rememberCoroutineScope()
-    // Colour changes ride along with the page motion instead of arriving after it.
-    val accent = accentFor(destinations[pagerState.currentPage])
-    val dockPosition = pagerState.currentPage + pagerState.currentPageOffsetFraction
+    // The wash waits for the page to settle, so control colours never recompose
+    // while the pager is still moving.
+    val accent = accentFor(destinations[pagerState.settledPage])
 
     CompositionLocalProvider(LocalSectionAccent provides accent) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -64,6 +64,9 @@ fun ReclaimApp(container: AppContainer) {
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize(),
+                // Compose the neighbour tab up front so the first swipe into it
+                // does not pay for the whole screen mid-gesture.
+                beyondViewportPageCount = 1,
                 key = { destinations[it].route },
             ) { page ->
                 val onNavigate: (ReclaimDestination) -> Unit = { target ->
@@ -111,7 +114,7 @@ fun ReclaimApp(container: AppContainer) {
                         )
                     }
                 },
-                position = dockPosition,
+                position = { pagerState.currentPage + pagerState.currentPageOffsetFraction },
                 onScrub = { index -> scope.launch { pagerState.scrollToPage(index) } },
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

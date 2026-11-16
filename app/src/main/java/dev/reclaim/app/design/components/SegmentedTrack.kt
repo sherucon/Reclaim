@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +52,7 @@ fun SegmentedTrack(
     modifier: Modifier = Modifier,
     trackColor: Color = ReclaimColors.Recess,
     onScrub: ((Int) -> Unit)? = null,
-    position: Float? = null,
+    position: (() -> Float)? = null,
     itemContent: @Composable (index: Int, selected: Boolean) -> Unit,
 ) {
     val density = LocalDensity.current
@@ -77,21 +76,21 @@ fun SegmentedTrack(
         val cellWidth = (maxWidth - TrackGap * (count - 1)) / count
         val stepPx = with(density) { (cellWidth + TrackGap).toPx() }
 
-        val animatedOffset by animateDpAsState(
+        val animatedOffset = animateDpAsState(
             targetValue = (cellWidth + TrackGap) * selectedIndex,
             animationSpec = tween(durationMillis = 220, easing = FastOutSlowInEasing),
             label = "trackIndicator",
         )
-        // A pager-linked track follows the finger; a standalone one animates on tap.
-        val indicatorOffset = if (position != null) {
-            (cellWidth + TrackGap) * position.coerceIn(0f, (count - 1).toFloat())
-        } else {
-            animatedOffset
-        }
+        // A pager-linked track follows the finger; a standalone one animates on
+        // tap. Reading both inside the placement lambda keeps scrolling and
+        // animation out of composition and layout.
+        val indicatorOffset: () -> Dp = position?.let { follow ->
+            { (cellWidth + TrackGap) * follow().coerceIn(0f, (count - 1).toFloat()) }
+        } ?: { animatedOffset.value }
 
         Box(
             modifier = Modifier
-                .offset { IntOffset(indicatorOffset.roundToPx(), 0) }
+                .offset { IntOffset(indicatorOffset().roundToPx(), 0) }
                 .size(width = cellWidth, height = itemHeight)
                 .shadow(elevation = 2.dp, shape = CircleShape)
                 .clip(CircleShape)

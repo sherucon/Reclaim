@@ -17,3 +17,4 @@ dependencyResolutionManagement {
 rootProject.name = "Reclaim"
 
 include(":app")
+include(":baselineprofile")

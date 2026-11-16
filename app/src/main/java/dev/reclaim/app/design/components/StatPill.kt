@@ -1,13 +1,10 @@
 package dev.reclaim.app.design.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,9 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
+import dev.reclaim.app.design.icons.ReclaimIcon
 
 /**
  * A tiny figure with its label, for use inside cards. Quiet by design: muted
@@ -25,7 +22,7 @@ import dev.reclaim.app.design.ReclaimColors
  */
 @Composable
 fun StatPill(
-    @DrawableRes icon: Int,
+    icon: Int,
     value: String,
     label: String,
     tint: Color,
@@ -39,10 +36,10 @@ fun StatPill(
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            painter = painterResource(icon),
+        ReclaimIcon(
+            icon = icon,
             contentDescription = null,
-            modifier = Modifier.size(14.dp),
+            size = 14.dp,
             tint = tint,
         )
         Text(

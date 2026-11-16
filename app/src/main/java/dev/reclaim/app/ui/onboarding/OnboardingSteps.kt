@@ -11,14 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.ReclaimColors
 import dev.reclaim.app.design.SageSection
@@ -29,6 +27,7 @@ import dev.reclaim.app.design.components.PermissionCard
 import dev.reclaim.app.design.components.PillToggle
 import dev.reclaim.app.design.components.PlatformGlyph
 import dev.reclaim.app.design.components.SoftCard
+import dev.reclaim.app.design.icons.ReclaimIcon
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.domain.model.DomainCategory
 import dev.reclaim.app.domain.model.Platform
@@ -74,10 +73,10 @@ internal fun WelcomeStep() {
                     .background(ReclaimColors.Sage.Soft),
                 contentAlignment = Alignment.Center,
             ) {
-                Icon(
-                    painter = painterResource(ReclaimIcons.Shield),
+                ReclaimIcon(
+                    icon = ReclaimIcons.Shield,
                     contentDescription = null,
-                    modifier = Modifier.size(76.dp),
+                    size = 76.dp,
                     tint = ReclaimColors.Sage.Deep,
                 )
             }
@@ -333,10 +332,10 @@ internal fun SummaryStep(
             Column(verticalArrangement = Arrangement.spacedBy(Space.md)) {
                 lines.forEach { line ->
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(ReclaimIcons.Check),
+                        ReclaimIcon(
+                            icon = ReclaimIcons.Check,
                             contentDescription = null,
-                            modifier = Modifier.size(18.dp),
+                            size = 18.dp,
                             tint = SageSection.deep,
                         )
                         Spacer(Modifier.width(Space.sm))

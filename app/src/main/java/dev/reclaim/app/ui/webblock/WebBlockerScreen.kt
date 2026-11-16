@@ -1,6 +1,5 @@
 package dev.reclaim.app.ui.webblock
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -150,7 +149,7 @@ private fun FilterCard(
 
 @Composable
 private fun CategoryCard(
-    @DrawableRes icon: Int,
+    icon: Int,
     title: String,
     detail: String,
     tint: androidx.compose.ui.graphics.Color,

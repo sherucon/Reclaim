@@ -2,18 +2,16 @@ package dev.reclaim.app.design.components
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.design.LocalSectionAccent
 import dev.reclaim.app.design.ReclaimColors
+import dev.reclaim.app.design.icons.ReclaimIcon
 
 data class DockItem(
     val icon: Int,
@@ -34,7 +32,7 @@ fun FloatingDock(
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onScrub: ((Int) -> Unit)? = null,
-    position: Float? = null,
+    position: (() -> Float)? = null,
 ) {
     SegmentedTrack(
         count = items.size,
@@ -60,10 +58,10 @@ fun FloatingDock(
                 animationSpec = tween(durationMillis = 160),
                 label = "dockIcon",
             )
-            Icon(
-                painter = painterResource(items[index].icon),
+            ReclaimIcon(
+                icon = items[index].icon,
                 contentDescription = items[index].label,
-                modifier = Modifier.size(22.dp),
+                size = 22.dp,
                 tint = tint,
             )
         },

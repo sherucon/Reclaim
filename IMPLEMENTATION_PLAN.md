@@ -112,7 +112,7 @@ It explicitly excludes feature 4 (billing/subscriptions) and feature 6 (kid/pare
 | D11 | Crash reporting consent | Follows the same analytics toggle | One clear privacy switch is easier to understand than three. |
 | D12 | Theme | Light-only in v1 | Protects the off-white aesthetic and reduces polish surface. |
 | D13 | Typography | Plus Jakarta Sans (SIL OFL) | Friendly geometric sans that matches the reference mood without licensing cost. |
-| D14 | Icon system | Heroicons solid, 24 dp glyphs | Filled shapes hold up inside pastel circles and need no stroke tuning. |
+| D14 | Icon system | Font Awesome Free (Solid), 24 dp glyphs | One font carries every icon; filled shapes hold up inside pastel circles and need no stroke tuning. |
 | D15 | Mascot | None | The app carries personality through type, color, and object illustrations, without a character to maintain. |
 | D16 | Distribution | Google Play first, GitHub Releases as backup | Play needs declarations for accessibility, VPN, and foreground services. |
 | D17 | Play target audience | 13+ | A social media control app is not a children's app. |
@@ -975,7 +975,7 @@ Components own their spacing and color variants so screens stay consistent.
 
 ### 5.6 Icon system
 
-- Heroicons solid at 24 dp, generated into vector drawables by `tools/heroicons_to_vector.py`.
+- Font Awesome Free (Solid) at 24 dp, shipped as the `fa_solid_900` font and drawn by `ReclaimIcon`.
 - Icons always sit in a pastel `IconBubble` when used at screen level.
 - Icons inside buttons are 18-20 dp and inherit the button text color.
 - Platform glyphs are our own simple marks or letter tiles, not official logos.
@@ -1604,7 +1604,7 @@ Tasks:
 
 1. Build the color, type, shape, spacing, and elevation tokens.
 2. Build `SoftCard`, `PillButton`, `PillToggle`, `SegmentedPills`, `StatusRing`, `MiniBarChart`, `CircularCheck`, `IconBubble`, `FloatingDock`, `PermissionCard`, and `ScreenScaffold`.
-3. Add the Heroicons solid set and the platform glyph set.
+3. Add the Font Awesome solid set and the platform glyph set.
 4. Build the four-tab pager, the draggable dock, and the screens.
 5. Add the offline placeholder for illustrations so layout work can proceed before art is final.
 6. Add Roborazzi screenshot tests for five components.
@@ -1928,7 +1928,7 @@ Acceptance criteria:
 - [ ] D11 crash reporting follows analytics consent
 - [ ] D12 light-only v1
 - [ ] D13 typography: Plus Jakarta Sans
-- [ ] D14 icon system: Heroicons solid
+- [ ] D14 icon system: Font Awesome Free solid
 - [ ] D15 no mascot
 - [ ] D16 Google Play first
 - [ ] D17 target audience 13+

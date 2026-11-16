@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.roborazzi)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 // Firebase needs google-services.json, which is never committed.
@@ -50,6 +51,11 @@ android {
                 "proguard-rules.pro",
             )
         }
+        // Profile generation installs the non-minified release build, so the
+        // build types the plugin creates need a local key. Release is untouched.
+        matching { it.name == "nonMinifiedRelease" || it.name == "benchmarkRelease" }.all {
+            signingConfig = signingConfigs.getByName("debug")
+        }
     }
 
     buildFeatures {
@@ -87,6 +93,11 @@ ktlint {
     android.set(true)
 }
 
+baselineProfile {
+    // Commit the generated profile so release builds get it from source.
+    saveInSrc = true
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.activity.compose)
@@ -95,6 +106,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.androidx.profileinstaller)
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(platform(libs.compose.bom))
@@ -116,4 +128,6 @@ dependencies {
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.compose.ui.test.junit4)
     debugImplementation(libs.compose.ui.test.manifest)
+
+    baselineProfile(project(":baselineprofile"))
 }

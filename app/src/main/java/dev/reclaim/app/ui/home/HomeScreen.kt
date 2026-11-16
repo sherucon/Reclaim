@@ -1,6 +1,5 @@
 package dev.reclaim.app.ui.home
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -228,7 +227,7 @@ private fun InterventionsCard() {
 private fun FeatureCard(
     title: String,
     detail: String,
-    @DrawableRes icon: Int,
+    icon: Int,
     tint: Color,
     background: Color,
     checked: Boolean,

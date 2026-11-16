@@ -1,26 +1,24 @@
 package dev.reclaim.app.design.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.reclaim.app.design.icons.ReclaimIcon
 
 /**
  * A glyph in a pastel circle. Every screen-level icon sits in one of these.
  */
 @Composable
 fun IconBubble(
-    @DrawableRes icon: Int,
+    icon: Int,
     tint: Color,
     background: Color,
     modifier: Modifier = Modifier,
@@ -35,10 +33,10 @@ fun IconBubble(
             .background(background),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            painter = painterResource(icon),
+        ReclaimIcon(
+            icon = icon,
             contentDescription = contentDescription,
-            modifier = Modifier.size(iconSize),
+            size = iconSize,
             tint = tint,
         )
     }

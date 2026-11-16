@@ -1,6 +1,5 @@
 package dev.reclaim.app.design.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,7 +31,7 @@ import dev.reclaim.app.design.Space
 fun PermissionCard(
     title: String,
     description: String,
-    @DrawableRes icon: Int,
+    icon: Int,
     granted: Boolean,
     actionLabel: String,
     onAction: () -> Unit,
