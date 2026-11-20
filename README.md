@@ -53,6 +53,7 @@ Analytics and crash reports are off until the user opts in. No names, package na
 GPL-3.0, see `LICENSE`.
 
 The UI uses PT Serif, licensed under the SIL Open Font License 1.1. The license text is in `docs/licenses/PTSerif-OFL.txt`.
+The onboarding flow uses Inter, also under the SIL Open Font License 1.1; see `docs/licenses/Inter-OFL.txt`.
 
 ## Acknowledgements
 

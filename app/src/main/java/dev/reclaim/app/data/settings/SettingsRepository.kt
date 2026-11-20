@@ -59,8 +59,7 @@ class SettingsRepository(
                 ?.let(Instant::ofEpochMilli),
             notificationsSuppressed = preferences[SettingsKeys.NotificationsSuppressed] ?: false,
             contentBlockingEnabled = preferences[SettingsKeys.ContentBlockingEnabled] ?: false,
-            contentPlatforms = preferences[SettingsKeys.ContentPlatforms]
-                ?: setOf("instagram", "youtube", "tiktok"),
+            contentPlatforms = preferences[SettingsKeys.ContentPlatforms] ?: emptySet(),
             sensitivity = Sensitivity.fromKey(preferences[SettingsKeys.ContentSensitivity]),
             webBlockingEnabled = preferences[SettingsKeys.WebBlockingEnabled] ?: false,
             webCategories = (preferences[SettingsKeys.WebCategories] ?: setOf(DomainCategory.SOCIAL.key))

@@ -3,7 +3,8 @@ package dev.reclaim.app.design
 import androidx.compose.ui.graphics.Color
 
 /**
- * Every color in the app comes from here. Screens never declare raw hex.
+ * Every color in the main app comes from here. Screens never declare raw hex.
+ * The onboarding surface uses its own palette in [OnboardingColors].
  *
  * Each accent has three steps: Soft for the strongest fill, Tint for the far end
  * of a card gradient (never the canvas, so a card keeps its edge), and Deep for

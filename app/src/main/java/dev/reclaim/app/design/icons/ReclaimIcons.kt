@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import dev.reclaim.app.R
 
 /**
- * Font Awesome Free 6.7.2, Solid. One icon set, one font, everywhere.
+ * Font Awesome Free 6.7.2: Solid for UI glyphs, Brands for platform marks.
  * Glyph names are noted beside each codepoint so a mapping is never guessed.
  * Font: SIL OFL 1.1, icons: CC BY 4.0; see docs/licenses/FontAwesome-Free.txt.
  */
@@ -53,7 +53,20 @@ object ReclaimIcons {
     val Banknotes = 0xf0d6 // money-bill
 }
 
+/** Brand marks from the same Font Awesome Free 6.7.2 package. */
+object ReclaimBrandIcons {
+    val Instagram = 0xf16d // instagram
+    val YouTube = 0xf167 // youtube
+    val TikTok = 0xe07b // tiktok
+    val Facebook = 0xf09a // facebook
+    val Snapchat = 0xf2ab // snapchat
+    val X = 0xe61b // x-twitter
+    val LinkedIn = 0xf08c // linkedin
+    val Reddit = 0xf1a1 // reddit
+}
+
 private val FontAwesomeSolid = FontFamily(Font(R.font.fa_solid_900))
+private val FontAwesomeBrands = FontFamily(Font(R.font.fa_brands_400))
 
 /**
  * Draws one Font Awesome glyph at exactly [size], centred and tinted like a
@@ -67,11 +80,49 @@ fun ReclaimIcon(
     tint: Color = LocalContentColor.current,
     size: Dp = 24.dp,
 ) {
+    FontAwesomeGlyph(
+        fontFamily = FontAwesomeSolid,
+        icon = icon,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        tint = tint,
+        size = size,
+    )
+}
+
+/** Draws a brand logo from the Font Awesome brands font. */
+@Composable
+fun ReclaimBrandIcon(
+    icon: Int,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    tint: Color = LocalContentColor.current,
+    size: Dp = 24.dp,
+) {
+    FontAwesomeGlyph(
+        fontFamily = FontAwesomeBrands,
+        icon = icon,
+        contentDescription = contentDescription,
+        modifier = modifier,
+        tint = tint,
+        size = size,
+    )
+}
+
+@Composable
+private fun FontAwesomeGlyph(
+    fontFamily: FontFamily,
+    icon: Int,
+    contentDescription: String?,
+    modifier: Modifier,
+    tint: Color,
+    size: Dp,
+) {
     val density = LocalDensity.current
     val measurer = rememberTextMeasurer()
-    val style = remember(density, size) {
+    val style = remember(density, size, fontFamily) {
         TextStyle(
-            fontFamily = FontAwesomeSolid,
+            fontFamily = fontFamily,
             fontSize = with(density) { size.toSp() },
         )
     }

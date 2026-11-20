@@ -34,8 +34,8 @@ fun accentFor(platform: Platform): Accent =
     }
 
 /**
- * Our own mark for a platform: its initial in a pastel circle. No official logo
- * is bundled or drawn.
+ * The app's neutral mark for a platform: its initial in a pastel circle. The
+ * onboarding picker uses the Font Awesome brand marks instead.
  */
 @Composable
 fun PlatformGlyph(

@@ -1,33 +1,23 @@
 package dev.reclaim.app.ui.onboarding
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.unit.dp
-import dev.reclaim.app.design.ReclaimColors
-import dev.reclaim.app.design.SageSection
-import dev.reclaim.app.design.Space
-import dev.reclaim.app.design.components.ChoiceCard
-import dev.reclaim.app.design.components.IconBubble
-import dev.reclaim.app.design.components.PermissionCard
-import dev.reclaim.app.design.components.PillToggle
-import dev.reclaim.app.design.components.PlatformGlyph
-import dev.reclaim.app.design.components.SoftCard
-import dev.reclaim.app.design.icons.ReclaimIcon
+import dev.reclaim.app.design.OnboardingColors
+import dev.reclaim.app.design.OnboardingSpace
+import dev.reclaim.app.design.OnboardingType
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.domain.model.DomainCategory
 import dev.reclaim.app.domain.model.Platform
@@ -42,49 +32,20 @@ import dev.reclaim.app.domain.onboarding.Struggle
  * one is visible; nothing here knows about step order.
  */
 @Composable
-internal fun StepHeader(
-    title: String,
-    helper: String? = null,
-) {
-    Text(
-        text = title,
-        style = MaterialTheme.typography.displaySmall,
-        color = ReclaimColors.Ink,
-    )
-    if (helper != null) {
-        Spacer(Modifier.height(Space.sm))
-        Text(
-            text = helper,
-            style = MaterialTheme.typography.bodyLarge,
-            color = ReclaimColors.InkSecondary,
-        )
-    }
-}
-
-@Composable
 internal fun WelcomeStep() {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Spacer(Modifier.height(24.dp))
-        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            Box(
-                modifier = Modifier
-                    .size(180.dp)
-                    .clip(CircleShape)
-                    .background(ReclaimColors.Sage.Soft),
-                contentAlignment = Alignment.Center,
-            ) {
-                ReclaimIcon(
-                    icon = ReclaimIcons.Shield,
-                    contentDescription = null,
-                    size = 76.dp,
-                    tint = ReclaimColors.Sage.Deep,
-                )
-            }
-        }
-        Spacer(Modifier.height(Space.huge))
-        StepHeader(
-            title = "Let's make your phone feel lighter.",
-            helper = "A few quick questions, then Reclaim handles the rest.",
+    Column(modifier = Modifier.fillMaxWidth().padding(horizontal = OnboardingSpace.Text)) {
+        OnboardingWordmark()
+        Spacer(Modifier.height(94.dp))
+        Text(
+            text = "Let’s make your\nphone feel lighter",
+            style = OnboardingType.Title,
+            color = OnboardingColors.Paper,
+        )
+        Spacer(Modifier.height(6.67.dp))
+        Text(
+            text = "A few quick questions, then Reclaim handles\nthe rest",
+            style = OnboardingType.Body,
+            color = OnboardingColors.Paper,
         )
     }
 }
@@ -95,16 +56,10 @@ internal fun NameStep(
     onName: (String) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        StepHeader(
-            title = "What should we call you?",
-            helper = "Only used for the greeting. It never leaves the phone.",
-        )
-        Spacer(Modifier.height(Space.xxl))
-        dev.reclaim.app.design.components.SoftTextField(
-            value = name,
-            onValueChange = onName,
-            placeholder = "Your name",
-        )
+        OnboardingStepHeader(title = "What should we\ncall you?")
+        Column(modifier = Modifier.padding(horizontal = OnboardingSpace.Card)) {
+            OnboardingTextField(value = name, onValueChange = onName)
+        }
     }
 }
 
@@ -113,20 +68,36 @@ internal fun AppsStep(
     selected: Set<String>,
     onToggle: (Platform) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        StepHeader(
-            title = "Which apps pull you in?",
-            helper = "Pick as many as you like. You can change this later.",
+    Column(modifier = Modifier.fillMaxSize().padding(top = 117.33.dp)) {
+        OnboardingStepHeader(
+            title = "Which apps pull\nyou in?",
+            helper = "Pick as many as you like, you can change\nthese later",
+            minHeight = 125.67.dp,
         )
-        Spacer(Modifier.height(Space.xxl))
-        Platform.entries.forEach { platform ->
-            ChoiceCard(
-                title = platform.displayName,
-                selected = platform.key in selected,
-                onClick = { onToggle(platform) },
-                leading = { PlatformGlyph(platform = platform, size = 36.dp) },
-            )
-            Spacer(Modifier.height(Space.cardGap))
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .clipToBounds()
+                .verticalEdgeFade(top = 20.dp, bottom = 20.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = OnboardingSpace.Card)
+                    .padding(top = 20.dp, bottom = 20.dp),
+                verticalArrangement = Arrangement.spacedBy(OnboardingSpace.CardGap),
+            ) {
+                Platform.entries.forEach { platform ->
+                    OnboardingChoice(
+                        title = platform.displayName,
+                        selected = platform.key in selected,
+                        onClick = { onToggle(platform) },
+                        leading = { OnboardingPlatformMark(platform = platform) },
+                    )
+                }
+            }
         }
     }
 }
@@ -137,26 +108,19 @@ internal fun StruggleStep(
     onToggle: (Struggle) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        StepHeader(
-            title = "Where does it hit hardest?",
-            helper = "This shapes what Reclaim sets up first.",
+        OnboardingStepHeader(
+            title = "Where does it hit\nthe hardest?",
+            helper = "This shapes what Reclaim sets up first",
         )
-        Spacer(Modifier.height(Space.xxl))
-        Struggle.entries.forEach { struggle ->
-            ChoiceCard(
-                title = struggle.title,
-                detail = struggle.detail,
-                selected = struggle in selected,
-                onClick = { onToggle(struggle) },
-                leading = {
-                    IconBubble(
-                        icon = struggleIcon(struggle),
-                        tint = SageSection.deep,
-                        background = SageSection.soft,
-                    )
-                },
-            )
-            Spacer(Modifier.height(Space.cardGap))
+        Choices {
+            Struggle.entries.forEach { struggle ->
+                OnboardingChoice(
+                    title = struggle.title,
+                    selected = struggle in selected,
+                    onClick = { onToggle(struggle) },
+                    leading = { OnboardingGlyph(icon = struggleIcon(struggle)) },
+                )
+            }
         }
     }
 }
@@ -167,26 +131,28 @@ internal fun DowntimeStep(
     onSelect: (DowntimeChoice) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        StepHeader(
-            title = "When should we protect your evenings?",
-            helper = "Reclaim can step in when you would rather be offline.",
+        OnboardingStepHeader(
+            title = "When should we\nprotect your evenings?",
+            helper = "Reclaim can step in when you would rather be\noffline.",
         )
-        Spacer(Modifier.height(Space.xxl))
-        DowntimeChoice.entries.forEach { choice ->
-            ChoiceCard(
-                title = downtimeTitle(choice),
-                detail = downtimeDetail(choice),
-                selected = choice == selected,
-                onClick = { onSelect(choice) },
-                leading = {
-                    IconBubble(
-                        icon = if (choice == DowntimeChoice.OFF) ReclaimIcons.Sun else ReclaimIcons.Moon,
-                        tint = SageSection.deep,
-                        background = SageSection.soft,
-                    )
-                },
-            )
-            Spacer(Modifier.height(Space.cardGap))
+        Choices {
+            DowntimeChoice.entries.forEach { choice ->
+                OnboardingChoice(
+                    title = downtimeTitle(choice),
+                    detail = downtimeDetail(choice),
+                    selected = choice == selected,
+                    onClick = { onSelect(choice) },
+                    leading = {
+                        OnboardingGlyph(
+                            icon = if (choice == DowntimeChoice.OFF) {
+                                ReclaimIcons.Settings
+                            } else {
+                                ReclaimIcons.Moon
+                            },
+                        )
+                    },
+                )
+            }
         }
     }
 }
@@ -197,26 +163,20 @@ internal fun SensitivityStep(
     onSelect: (Sensitivity) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        StepHeader(
-            title = "How much scrolling feels okay?",
+        OnboardingStepHeader(
+            title = "How much scrolling\nfeels okay?",
             helper = "Gentle gives you more room. Strict steps in sooner.",
         )
-        Spacer(Modifier.height(Space.xxl))
-        Sensitivity.entries.forEach { sensitivity ->
-            ChoiceCard(
-                title = sensitivityTitle(sensitivity),
-                detail = sensitivityDetail(sensitivity),
-                selected = sensitivity == selected,
-                onClick = { onSelect(sensitivity) },
-                leading = {
-                    IconBubble(
-                        icon = ReclaimIcons.Reels,
-                        tint = SageSection.deep,
-                        background = SageSection.soft,
-                    )
-                },
-            )
-            Spacer(Modifier.height(Space.cardGap))
+        Choices {
+            Sensitivity.entries.forEach { sensitivity ->
+                OnboardingChoice(
+                    title = sensitivityTitle(sensitivity),
+                    detail = sensitivityDetail(sensitivity),
+                    selected = sensitivity == selected,
+                    onClick = { onSelect(sensitivity) },
+                    leading = { OnboardingGlyph(icon = ReclaimIcons.Reels) },
+                )
+            }
         }
     }
 }
@@ -231,16 +191,19 @@ internal fun PermissionStep(
     footnote: String,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        StepHeader(title = title, helper = helper)
-        Spacer(Modifier.height(Space.xxl))
-        PermissionCard(
-            title = "Access",
-            description = footnote,
-            icon = ReclaimIcons.Shield,
-            granted = granted,
-            actionLabel = actionLabel,
-            onAction = onAction,
+        OnboardingStepHeader(
+            title = title,
+            helper = helper,
+            minHeight = 188.34.dp,
         )
+        Column(modifier = Modifier.padding(horizontal = OnboardingSpace.Card)) {
+            OnboardingPermissionCard(
+                description = footnote,
+                granted = granted,
+                actionLabel = actionLabel,
+                onAction = onAction,
+            )
+        }
     }
 }
 
@@ -250,26 +213,20 @@ internal fun WebSetupStep(
     onToggle: (DomainCategory) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        StepHeader(
-            title = "Want to quiet the mobile web too?",
-            helper = "Reclaim can block these sites in every browser on the phone.",
+        OnboardingStepHeader(
+            title = "Want to quiet the\nmobile web too?",
+            helper = "Reclaim can block these sites in every browser\non the phone.",
         )
-        Spacer(Modifier.height(Space.xxl))
-        DomainCategory.entries.forEach { category ->
-            ChoiceCard(
-                title = category.displayName,
-                detail = categoryDetail(category),
-                selected = category in selected,
-                onClick = { onToggle(category) },
-                leading = {
-                    IconBubble(
-                        icon = categoryIcon(category),
-                        tint = SageSection.deep,
-                        background = SageSection.soft,
-                    )
-                },
-            )
-            Spacer(Modifier.height(Space.cardGap))
+        Choices {
+            DomainCategory.entries.forEach { category ->
+                OnboardingChoice(
+                    title = category.displayName,
+                    detail = categoryDetail(category),
+                    selected = category in selected,
+                    onClick = { onToggle(category) },
+                    leading = { OnboardingGlyph(icon = categoryIcon(category)) },
+                )
+            }
         }
     }
 }
@@ -280,37 +237,17 @@ internal fun AnalyticsStep(
     onEnabledChange: (Boolean) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
-        StepHeader(
-            title = "Help us make Reclaim better?",
-            helper = "Share anonymous usage events and crash reports. Never your apps, sites, name, or content.",
+        OnboardingStepHeader(
+            title = "Help us make Reclaim\nbetter?",
+            helper = "Share anonymous usage events and crash reports.\nNever your apps, sites, name, or content.",
         )
-        Spacer(Modifier.height(Space.xxl))
-        SoftCard {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconBubble(
-                    icon = ReclaimIcons.Info,
-                    tint = SageSection.deep,
-                    background = SageSection.soft,
-                )
-                Spacer(Modifier.width(Space.md))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Anonymous analytics",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = ReclaimColors.Ink,
-                    )
-                    Text(
-                        text = "Off by default. You can turn it off any time.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = ReclaimColors.InkSecondary,
-                    )
-                }
-                PillToggle(
-                    checked = enabled,
-                    onCheckedChange = onEnabledChange,
-                    contentDescription = "Anonymous analytics",
-                )
-            }
+        Choices {
+            OnboardingChoice(
+                title = "Anonymous analytics",
+                selected = enabled,
+                onClick = { onEnabledChange(!enabled) },
+                leading = { OnboardingGlyph(icon = ReclaimIcons.Info) },
+            )
         }
     }
 }
@@ -323,39 +260,32 @@ internal fun SummaryStep(
     val lines = OnboardingPlan.summaryLines(answers)
 
     Column(modifier = Modifier.fillMaxWidth()) {
-        StepHeader(
-            title = "Your calm plan is ready.",
-            helper = "You can change everything later in Settings.",
+        OnboardingStepHeader(
+            title = "Your calm plan is\nready.",
+            helper = "You can change everything later in settings.",
         )
-        Spacer(Modifier.height(Space.xxl))
-        SoftCard {
-            Column(verticalArrangement = Arrangement.spacedBy(Space.md)) {
-                lines.forEach { line ->
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        ReclaimIcon(
-                            icon = ReclaimIcons.Check,
-                            contentDescription = null,
-                            size = 18.dp,
-                            tint = SageSection.deep,
-                        )
-                        Spacer(Modifier.width(Space.sm))
-                        Text(
-                            text = line,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = ReclaimColors.Ink,
-                        )
-                    }
-                }
-            }
+        Column(modifier = Modifier.padding(horizontal = OnboardingSpace.Card)) {
+            OnboardingSummaryCard(lines = lines)
         }
         if (!accessibilityGranted) {
-            Spacer(Modifier.height(Space.cardGap))
+            Spacer(Modifier.height(24.dp))
             Text(
-                text = "Accessibility is still off, so blocking stays paused until you turn it on.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = ReclaimColors.InkSecondary,
+                text = "Accessibility is still off, so blocking stays paused\nuntil you turn it on.",
+                style = OnboardingType.Body,
+                color = OnboardingColors.Paper,
+                modifier = Modifier.padding(horizontal = OnboardingSpace.Text),
             )
         }
+    }
+}
+
+@Composable
+private fun Choices(content: @Composable () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = OnboardingSpace.Card),
+        verticalArrangement = Arrangement.spacedBy(OnboardingSpace.CardGap),
+    ) {
+        content()
     }
 }
 
@@ -405,6 +335,6 @@ private fun sensitivityTitle(sensitivity: Sensitivity): String =
 private fun sensitivityDetail(sensitivity: Sensitivity): String =
     when (sensitivity) {
         Sensitivity.RELAXED -> "Three screens before a pause"
-        Sensitivity.BALANCED -> "One and a half screens, then a break"
-        Sensitivity.STRICT -> "Less than one screen, stepped in early"
+        Sensitivity.BALANCED -> "One and a half screens, then a\nbreak"
+        Sensitivity.STRICT -> "Less than one screen, stepped\nin early"
     }

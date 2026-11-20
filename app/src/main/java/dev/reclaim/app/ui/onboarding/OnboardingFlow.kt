@@ -7,22 +7,20 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -31,8 +29,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -42,17 +40,10 @@ import dev.reclaim.app.AppContainer
 import dev.reclaim.app.analytics.AnalyticsEvents
 import dev.reclaim.app.core.permissions.PermissionChecker
 import dev.reclaim.app.data.onboarding.SettingsOnboardingStore
-import dev.reclaim.app.design.ReclaimColors
-import dev.reclaim.app.design.SageSection
-import dev.reclaim.app.design.Space
-import dev.reclaim.app.design.components.CircleIconButton
-import dev.reclaim.app.design.components.PillButton
-import dev.reclaim.app.design.components.ProgressDots
-import dev.reclaim.app.design.icons.ReclaimIcons
+import dev.reclaim.app.design.OnboardingSpace
 import dev.reclaim.app.domain.model.AppSettings
 import dev.reclaim.app.domain.onboarding.OnboardingPlan
 import dev.reclaim.app.domain.onboarding.OnboardingStep
-import dev.reclaim.app.ui.nav.ReclaimBackdrop
 
 private data class Grants(
     val app: Boolean,
@@ -109,8 +100,7 @@ fun OnboardingFlow(
     }
 
     OnboardingScaffold(
-        stepIndex = state.index,
-        stepCount = state.total,
+        showNav = state.step != OnboardingStep.WELCOME,
         canGoBack = state.canGoBack,
         onBack = {
             direction = -1
@@ -125,8 +115,6 @@ fun OnboardingFlow(
                 viewModel.next(optionCode = optionCode(state))
             }
         },
-        secondaryLabel = if (state.step == OnboardingStep.WELCOME) null else "Skip setup",
-        onSecondary = { viewModel.skipSetup(accessibilityGranted = grants.app) },
     ) {
         AnimatedContent(
             targetState = state.step,
@@ -142,12 +130,16 @@ fun OnboardingFlow(
                 )
             },
             label = "onboardingStep",
+            modifier = Modifier.fillMaxSize(),
         ) { step ->
+            val topPadding = if (step == OnboardingStep.WELCOME) 178.dp else 117.33.dp
             when (step) {
-                OnboardingStep.WELCOME -> WelcomeStep()
+                OnboardingStep.WELCOME -> StepScroll(topPadding) { WelcomeStep() }
 
-                OnboardingStep.NAME -> NameStep(state.answers.name) { name ->
-                    viewModel.updateAnswers { it.copy(name = name) }
+                OnboardingStep.NAME -> StepScroll(topPadding) {
+                    NameStep(state.answers.name) { name ->
+                        viewModel.updateAnswers { it.copy(name = name) }
+                    }
                 }
 
                 OnboardingStep.APPS -> AppsStep(state.answers.platforms) { platform ->
@@ -156,152 +148,156 @@ fun OnboardingFlow(
                     }
                 }
 
-                OnboardingStep.STRUGGLE -> StruggleStep(state.answers.struggles) { struggle ->
-                    viewModel.updateAnswers { answers ->
-                        answers.copy(struggles = answers.struggles.toggle(struggle))
+                OnboardingStep.STRUGGLE -> StepScroll(topPadding) {
+                    StruggleStep(state.answers.struggles) { struggle ->
+                        viewModel.updateAnswers { answers ->
+                            answers.copy(struggles = answers.struggles.toggle(struggle))
+                        }
                     }
                 }
 
-                OnboardingStep.DOWNTIME -> DowntimeStep(state.answers.downtime) { choice ->
-                    viewModel.updateAnswers { it.copy(downtime = choice) }
-                }
-
-                OnboardingStep.SENSITIVITY -> SensitivityStep(state.answers.sensitivity) { sensitivity ->
-                    viewModel.updateAnswers { it.copy(sensitivity = sensitivity) }
-                }
-
-                OnboardingStep.APP_PERMISSION -> PermissionStep(
-                    title = "Let Reclaim step in when a blocked app opens.",
-                    helper = "Android needs accessibility access for this. Reclaim only checks which app is on screen.",
-                    granted = grants.app,
-                    actionLabel = if (grants.app) "Open settings" else "Allow access",
-                    onAction = {
-                        logPrompt("accessibility_app")
-                        context.startActivity(permissions.accessibilitySettingsIntent())
-                    },
-                    footnote = "Reclaim never reads what you type or see.",
-                )
-
-                OnboardingStep.CONTENT_PERMISSION -> PermissionStep(
-                    title = "Let Reclaim notice when you are in Reels or Shorts.",
-                    helper = "The same access, used only to spot short-video surfaces inside the apps you chose.",
-                    granted = grants.content,
-                    actionLabel = if (grants.content) "Open settings" else "Allow access",
-                    onAction = {
-                        logPrompt("accessibility_content")
-                        context.startActivity(permissions.accessibilitySettingsIntent())
-                    },
-                    footnote = "Chats, comments, and stories are left alone.",
-                )
-
-                OnboardingStep.WEB_SETUP -> WebSetupStep(state.answers.webCategories) { category ->
-                    viewModel.updateAnswers { answers ->
-                        answers.copy(webCategories = answers.webCategories.toggle(category))
+                OnboardingStep.DOWNTIME -> StepScroll(topPadding) {
+                    DowntimeStep(state.answers.downtime) { choice ->
+                        viewModel.updateAnswers { it.copy(downtime = choice) }
                     }
                 }
 
-                OnboardingStep.NOTIFICATIONS -> PermissionStep(
-                    title = "Should blocked apps stay quiet?",
-                    helper = "With notification access, a blocked app cannot buzz you while a rule is on.",
-                    granted = grants.notifications,
-                    actionLabel = if (grants.notifications) "Open settings" else "Allow access",
-                    onAction = {
-                        logPrompt("notifications")
-                        context.startActivity(permissions.notificationSettingsIntent())
-                    },
-                    footnote = "Reclaim never reads the content of a notification.",
-                )
-
-                OnboardingStep.ANALYTICS -> AnalyticsStep(state.answers.analyticsEnabled) { enabled ->
-                    viewModel.updateAnswers { it.copy(analyticsEnabled = enabled) }
+                OnboardingStep.SENSITIVITY -> StepScroll(topPadding) {
+                    SensitivityStep(state.answers.sensitivity) { sensitivity ->
+                        viewModel.updateAnswers { it.copy(sensitivity = sensitivity) }
+                    }
                 }
 
-                OnboardingStep.SUMMARY -> SummaryStep(
-                    answers = state.answers,
-                    accessibilityGranted = grants.app,
-                )
+                OnboardingStep.APP_PERMISSION -> StepScroll(topPadding) {
+                    PermissionStep(
+                        title = "Let Reclaim step in\nwhen a blocked app\nopens.",
+                        helper = "Android needs accessibility access for this.\n" +
+                            "Reclaim only checks which app is on screen.",
+                        granted = grants.app,
+                        actionLabel = if (grants.app) "Open settings" else "Allow access",
+                        onAction = {
+                            logPrompt("accessibility_app")
+                            context.startActivity(permissions.accessibilitySettingsIntent())
+                        },
+                        footnote = "Reclaim never reads what you\ntype or see.",
+                    )
+                }
+
+                OnboardingStep.CONTENT_PERMISSION -> StepScroll(topPadding) {
+                    PermissionStep(
+                        title = "Let Reclaim notice\nwhen you are in Reels\nor Shorts.",
+                        helper = "The same access, used only to spot short-video\nsurfaces inside the apps you chose.",
+                        granted = grants.content,
+                        actionLabel = if (grants.content) "Open settings" else "Allow access",
+                        onAction = {
+                            logPrompt("accessibility_content")
+                            context.startActivity(permissions.accessibilitySettingsIntent())
+                        },
+                        footnote = "Chats, comments, and\nstories are left alone.",
+                    )
+                }
+
+                OnboardingStep.WEB_SETUP -> StepScroll(topPadding) {
+                    WebSetupStep(state.answers.webCategories) { category ->
+                        viewModel.updateAnswers { answers ->
+                            answers.copy(webCategories = answers.webCategories.toggle(category))
+                        }
+                    }
+                }
+
+                OnboardingStep.NOTIFICATIONS -> StepScroll(topPadding) {
+                    PermissionStep(
+                        title = "Should blocked apps\nstay quiet?",
+                        helper = "With notification access, a blocked app cannot\nbuzz you while a rule is on.",
+                        granted = grants.notifications,
+                        actionLabel = if (grants.notifications) "Open settings" else "Allow access",
+                        onAction = {
+                            logPrompt("notifications")
+                            context.startActivity(permissions.notificationSettingsIntent())
+                        },
+                        footnote = "Reclaim never reads the\ncontent of a notification.",
+                    )
+                }
+
+                OnboardingStep.ANALYTICS -> StepScroll(topPadding) {
+                    AnalyticsStep(state.answers.analyticsEnabled) { enabled ->
+                        viewModel.updateAnswers { it.copy(analyticsEnabled = enabled) }
+                    }
+                }
+
+                OnboardingStep.SUMMARY -> StepScroll(topPadding) {
+                    SummaryStep(
+                        answers = state.answers,
+                        accessibilityGranted = grants.app,
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
+private fun StepScroll(
+    topPadding: Dp,
+    content: @Composable () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(top = topPadding)
+            .padding(bottom = 24.dp),
+    ) {
+        content()
+    }
+}
+
+@Composable
 private fun OnboardingScaffold(
-    stepIndex: Int,
-    stepCount: Int,
+    showNav: Boolean,
     canGoBack: Boolean,
     onBack: () -> Unit,
     primaryLabel: String,
     onPrimary: () -> Unit,
-    secondaryLabel: String?,
-    onSecondary: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        ReclaimBackdrop(accent = SageSection)
+        OnboardingBackdrop()
+        OnboardingLightSystemBars()
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.systemBars)
-                .padding(horizontal = Space.screenHorizontal),
+                .windowInsetsPadding(WindowInsets.systemBars),
         ) {
-            Spacer(Modifier.height(Space.md))
+            if (showNav) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = OnboardingSpace.Text, end = OnboardingSpace.Text, top = 9.33.dp)
+                        .heightIn(min = 50.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (canGoBack) {
+                        OnboardingBackButton(onClick = onBack)
+                    }
+                    Spacer(Modifier.weight(1f))
+                    OnboardingWordmark()
+                }
+            }
+
+            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                content()
+            }
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp),
+                    .padding(horizontal = OnboardingSpace.Card),
             ) {
-                if (canGoBack) {
-                    CircleIconButton(
-                        icon = ReclaimIcons.Back,
-                        contentDescription = "Back",
-                        onClick = onBack,
-                        modifier = Modifier.align(Alignment.CenterStart),
-                    )
-                }
-                ProgressDots(
-                    count = stepCount,
-                    currentIndex = stepIndex,
-                    modifier = Modifier.align(Alignment.Center),
-                )
+                OnboardingPrimaryButton(text = primaryLabel, onClick = onPrimary)
             }
-
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(top = Space.md),
-            ) {
-                content()
-            }
-
-            Spacer(Modifier.height(Space.lg))
-            PillButton(
-                text = primaryLabel,
-                onClick = onPrimary,
-                modifier = Modifier.fillMaxWidth(),
-            )
-
-            if (secondaryLabel != null) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(44.dp)
-                        .clip(CircleShape)
-                        .clickable(onClick = onSecondary),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = secondaryLabel,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = ReclaimColors.InkSecondary,
-                    )
-                }
-            }
-
-            Spacer(Modifier.height(Space.md))
+            Spacer(Modifier.height(10.dp))
         }
     }
 }
@@ -323,7 +319,7 @@ private fun Grants.granted(permission: String): Boolean =
 
 private fun primaryLabel(step: OnboardingStep): String =
     when (step) {
-        OnboardingStep.WELCOME -> "Let's begin"
+        OnboardingStep.WELCOME -> "Let’s begin"
         OnboardingStep.SUMMARY -> "Start using Reclaim"
         else -> "Continue"
     }
