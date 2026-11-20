@@ -10,10 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +30,8 @@ import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.components.StatPill
 import dev.reclaim.app.design.components.StatusRing
 import dev.reclaim.app.design.icons.ReclaimIcons
+import dev.reclaim.app.domain.model.AppSettings
+import dev.reclaim.app.domain.model.PlatformRegistry
 import dev.reclaim.app.ui.common.SectionPreview
 import dev.reclaim.app.ui.common.rememberGreeting
 import dev.reclaim.app.ui.nav.ReclaimDestination
@@ -51,14 +49,20 @@ private fun countWord(count: Int): String =
 
 @Composable
 fun HomeScreen(
+    settings: AppSettings,
     onNavigate: (ReclaimDestination) -> Unit,
     onOpenSettings: () -> Unit,
+    onUpdate: ((AppSettings) -> AppSettings) -> Unit,
+    onFeatureToggled: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var appsOn by rememberSaveable { mutableStateOf(true) }
-    var reelsOn by rememberSaveable { mutableStateOf(true) }
-    var webOn by rememberSaveable { mutableStateOf(false) }
+    val appsOn = settings.appBlockingEnabled
+    val reelsOn = settings.contentBlockingEnabled
+    val webOn = settings.webBlockingEnabled
     val activeProtections = listOf(appsOn, reelsOn, webOn).count { it }
+    val blockedApps = PlatformRegistry.all.count { platform ->
+        platform.packages.any { it in settings.blockedPackages }
+    }
 
     ScreenScaffold(
         modifier = modifier,
@@ -86,12 +90,15 @@ fun HomeScreen(
 
         FeatureCard(
             title = "Apps",
-            detail = "Four apps and quiet evenings",
+            detail = if (blockedApps == 0) "Nothing blocked yet" else "$blockedApps apps and quiet evenings",
             icon = ReclaimIcons.Apps,
             tint = ReclaimColors.Peach.Deep,
             background = ReclaimColors.Peach.Soft,
             checked = appsOn,
-            onCheckedChange = { appsOn = it },
+            onCheckedChange = { enabled ->
+                onFeatureToggled("app_blocking", enabled)
+                onUpdate { it.copy(appBlockingEnabled = enabled) }
+            },
         )
         Spacer(Modifier.height(Space.cardGap))
         FeatureCard(
@@ -101,7 +108,10 @@ fun HomeScreen(
             tint = ReclaimColors.Lilac.Deep,
             background = ReclaimColors.Lilac.Soft,
             checked = reelsOn,
-            onCheckedChange = { reelsOn = it },
+            onCheckedChange = { enabled ->
+                onFeatureToggled("reels_blocking", enabled)
+                onUpdate { it.copy(contentBlockingEnabled = enabled) }
+            },
         )
         Spacer(Modifier.height(Space.cardGap))
         FeatureCard(
@@ -111,7 +121,10 @@ fun HomeScreen(
             tint = ReclaimColors.Sky.Deep,
             background = ReclaimColors.Sky.Soft,
             checked = webOn,
-            onCheckedChange = { webOn = it },
+            onCheckedChange = { enabled ->
+                onFeatureToggled("web_blocking", enabled)
+                onUpdate { it.copy(webBlockingEnabled = enabled) }
+            },
         )
     }
 }
@@ -266,7 +279,13 @@ private fun FeatureCard(
 private fun HomePreview() {
     ReclaimTheme {
         SectionPreview(SageSection) {
-            HomeScreen(onNavigate = {}, onOpenSettings = {})
+            HomeScreen(
+                settings = AppSettings(),
+                onNavigate = {},
+                onOpenSettings = {},
+                onUpdate = {},
+                onFeatureToggled = { _, _ -> },
+            )
         }
     }
 }

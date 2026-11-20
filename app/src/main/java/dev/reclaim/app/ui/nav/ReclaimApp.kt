@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import dev.reclaim.app.AppContainer
+import dev.reclaim.app.analytics.AnalyticsEvents
 import dev.reclaim.app.design.LilacSection
 import dev.reclaim.app.design.LocalSectionAccent
 import dev.reclaim.app.design.PeachSection
@@ -36,6 +37,7 @@ import dev.reclaim.app.design.SkySection
 import dev.reclaim.app.design.Space
 import dev.reclaim.app.design.components.DockItem
 import dev.reclaim.app.design.components.FloatingDock
+import dev.reclaim.app.domain.model.AppSettings
 import dev.reclaim.app.ui.apps.AppsScreen
 import dev.reclaim.app.ui.home.HomeScreen
 import dev.reclaim.app.ui.reels.ReelsScreen
@@ -48,11 +50,17 @@ import kotlinx.coroutines.launch
  * dragged. The wash and every control accent follow the settled page.
  */
 @Composable
-fun ReclaimApp(container: AppContainer) {
+fun ReclaimApp(
+    container: AppContainer,
+    settings: AppSettings,
+) {
     var showSettings by rememberSaveable { mutableStateOf(false) }
     val destinations = ReclaimDestination.entries
     val pagerState = rememberPagerState(pageCount = { destinations.size })
     val scope = rememberCoroutineScope()
+    val onUpdate: ((AppSettings) -> AppSettings) -> Unit = { transform ->
+        scope.launch { container.settingsRepository.update(transform) }
+    }
     // The wash waits for the page to settle, so control colours never recompose
     // while the pager is still moving.
     val accent = accentFor(destinations[pagerState.settledPage])
@@ -80,12 +88,23 @@ fun ReclaimApp(container: AppContainer) {
 
                 when (destinations[page]) {
                     ReclaimDestination.HOME -> HomeScreen(
+                        settings = settings,
                         onNavigate = onNavigate,
                         onOpenSettings = { showSettings = true },
+                        onUpdate = onUpdate,
+                        onFeatureToggled = { feature, enabled ->
+                            container.analytics.logEvent(
+                                AnalyticsEvents.FEATURE_TOGGLED,
+                                mapOf(
+                                    AnalyticsEvents.Params.FEATURE to feature,
+                                    AnalyticsEvents.Params.ENABLED to enabled,
+                                ),
+                            )
+                        },
                     )
-                    ReclaimDestination.APPS -> AppsScreen()
-                    ReclaimDestination.REELS -> ReelsScreen()
-                    ReclaimDestination.WEB -> WebBlockerScreen()
+                    ReclaimDestination.APPS -> AppsScreen(settings = settings, onUpdate = onUpdate)
+                    ReclaimDestination.REELS -> ReelsScreen(settings = settings, onUpdate = onUpdate)
+                    ReclaimDestination.WEB -> WebBlockerScreen(settings = settings, onUpdate = onUpdate)
                 }
             }
 

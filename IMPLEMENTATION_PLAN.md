@@ -1647,6 +1647,13 @@ Acceptance criteria:
 
 ### Phase 4: App blocker service and overlay
 
+Implementation notes:
+
+- The overlay is launched directly by the accessibility service. If a device refuses background activity starts, the fallback is a `SYSTEM_ALERT_WINDOW` overlay with an explicit permission request, built only if a device needs it.
+- The Home switches now persist to settings. App blocking and downtime are enforced in this phase; the reels switch waits for Phase 5 and the web switch for Phase 6.
+- Notification suppression only cancels a matching notification. It never reads, rewrites, or forwards one.
+- Package visibility is declared with intent queries for the launcher and for launcher activities, so no `QUERY_ALL_PACKAGES` is needed.
+
 Tasks:
 
 1. Add `AppBlockerService` with manifest registration and `app_blocker_config.xml`.

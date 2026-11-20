@@ -10,10 +10,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,23 +24,30 @@ import dev.reclaim.app.design.components.PillToggle
 import dev.reclaim.app.design.components.ScreenScaffold
 import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.icons.ReclaimIcons
+import dev.reclaim.app.domain.model.AppSettings
+import dev.reclaim.app.domain.model.DomainCategory
 import dev.reclaim.app.ui.common.SectionPreview
 
 private val DemoQueries = listOf(12, 28, 21, 44, 39, 52, 34)
 
 @Composable
-fun WebBlockerScreen(modifier: Modifier = Modifier) {
-    var webOn by rememberSaveable { mutableStateOf(true) }
-    var socialOn by rememberSaveable { mutableStateOf(true) }
-    var adultOn by rememberSaveable { mutableStateOf(true) }
-    var gamblingOn by rememberSaveable { mutableStateOf(false) }
+fun WebBlockerScreen(
+    settings: AppSettings,
+    onUpdate: ((AppSettings) -> AppSettings) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val webOn = settings.webBlockingEnabled
+    val categories = settings.webCategories
 
     ScreenScaffold(
         modifier = modifier,
         title = "Web",
         subtitle = "Quiet the mobile web, in every browser on the phone.",
     ) {
-        FilterCard(enabled = webOn, onEnabledChange = { webOn = it })
+        FilterCard(
+            enabled = webOn,
+            onEnabledChange = { enabled -> onUpdate { it.copy(webBlockingEnabled = enabled) } },
+        )
 
         Spacer(Modifier.height(Space.cardGap))
 
@@ -54,8 +57,10 @@ fun WebBlockerScreen(modifier: Modifier = Modifier) {
             detail = "1,180 sites",
             tint = ReclaimColors.Peach.Deep,
             background = ReclaimColors.Peach.Soft,
-            checked = socialOn,
-            onCheckedChange = { socialOn = it },
+            checked = DomainCategory.SOCIAL in categories,
+            onCheckedChange = { on ->
+                onUpdate { it.copy(webCategories = it.webCategories.toggle(DomainCategory.SOCIAL, on)) }
+            },
         )
         Spacer(Modifier.height(Space.cardGap))
         CategoryCard(
@@ -64,8 +69,10 @@ fun WebBlockerScreen(modifier: Modifier = Modifier) {
             detail = "42 sites",
             tint = ReclaimColors.Blush.Deep,
             background = ReclaimColors.Blush.Soft,
-            checked = adultOn,
-            onCheckedChange = { adultOn = it },
+            checked = DomainCategory.ADULT in categories,
+            onCheckedChange = { on ->
+                onUpdate { it.copy(webCategories = it.webCategories.toggle(DomainCategory.ADULT, on)) }
+            },
         )
         Spacer(Modifier.height(Space.cardGap))
         CategoryCard(
@@ -74,8 +81,10 @@ fun WebBlockerScreen(modifier: Modifier = Modifier) {
             detail = "18 sites",
             tint = ReclaimColors.Lilac.Deep,
             background = ReclaimColors.Lilac.Soft,
-            checked = gamblingOn,
-            onCheckedChange = { gamblingOn = it },
+            checked = DomainCategory.GAMBLING in categories,
+            onCheckedChange = { on ->
+                onUpdate { it.copy(webCategories = it.webCategories.toggle(DomainCategory.GAMBLING, on)) }
+            },
         )
 
         Spacer(Modifier.height(Space.cardGap))
@@ -185,6 +194,11 @@ private fun CategoryCard(
     }
 }
 
+private fun Set<DomainCategory>.toggle(
+    category: DomainCategory,
+    enabled: Boolean,
+): Set<DomainCategory> = if (enabled) this + category else this - category
+
 @Composable
 private fun BlockedQueriesCard() {
     SoftCard {
@@ -228,7 +242,7 @@ private fun BlockedQueriesCard() {
 private fun WebPreview() {
     ReclaimTheme {
         SectionPreview(SkySection) {
-            WebBlockerScreen()
+            WebBlockerScreen(settings = AppSettings(), onUpdate = {})
         }
     }
 }

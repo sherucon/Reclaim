@@ -11,18 +11,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import dev.reclaim.app.core.permissions.PermissionChecker
 import dev.reclaim.app.design.LocalSectionAccent
 import dev.reclaim.app.design.PeachSection
 import dev.reclaim.app.design.ReclaimColors
@@ -36,25 +43,41 @@ import dev.reclaim.app.design.components.PlatformGlyph
 import dev.reclaim.app.design.components.ScreenScaffold
 import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.icons.ReclaimIcons
+import dev.reclaim.app.domain.model.AppSettings
 import dev.reclaim.app.domain.model.Platform
 import dev.reclaim.app.ui.common.SectionPreview
 import java.time.DayOfWeek
-
-// Demo selection until the app picker lands with real package names.
-private val DemoApps = listOf(
-    Platform.INSTAGRAM,
-    Platform.YOUTUBE,
-    Platform.TIKTOK,
-    Platform.REDDIT,
-)
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun AppsScreen(modifier: Modifier = Modifier) {
-    var downtimeOn by rememberSaveable { mutableStateOf(true) }
-    var notificationsOn by rememberSaveable { mutableStateOf(false) }
-    var paused by rememberSaveable { mutableStateOf(false) }
-    var selectedDays by rememberSaveable { mutableStateOf(DayOfWeek.entries.toSet()) }
-    var selectedApps by rememberSaveable { mutableStateOf(DemoApps.map { it.key }.toSet()) }
+fun AppsScreen(
+    settings: AppSettings,
+    onUpdate: ((AppSettings) -> AppSettings) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    val permissions = remember { PermissionChecker(context) }
+    var notificationsGranted by remember { mutableStateOf(permissions.isNotificationListenerEnabled()) }
+    var showPauseDialog by remember { mutableStateOf(false) }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        notificationsGranted = permissions.isNotificationListenerEnabled()
+    }
+
+    // Suppression only means anything while the listener is connected.
+    LaunchedEffect(notificationsGranted) {
+        if (settings.notificationsSuppressed != notificationsGranted) {
+            onUpdate { it.copy(notificationsSuppressed = notificationsGranted) }
+        }
+    }
+
+    val isPaused = settings.isPaused(Instant.now())
+    val selectedKeys = Platform.entries
+        .filter { platform -> platform.packages.any { it in settings.blockedPackages } }
+        .map { it.key }
+        .toSet()
 
     ScreenScaffold(
         modifier = modifier,
@@ -62,24 +85,39 @@ fun AppsScreen(modifier: Modifier = Modifier) {
         subtitle = "Choose what stays out of reach, and when.",
     ) {
         DowntimeCard(
-            enabled = downtimeOn,
-            onEnabledChange = { downtimeOn = it },
-            days = selectedDays,
+            enabled = settings.downtime.enabled,
+            onEnabledChange = { enabled ->
+                onUpdate { it.copy(downtime = it.downtime.copy(enabled = enabled)) }
+            },
+            days = settings.downtime.days,
             onDayToggle = { day ->
-                selectedDays = if (day in selectedDays) selectedDays - day else selectedDays + day
+                onUpdate { current ->
+                    val days = current.downtime.days
+                    current.copy(
+                        downtime = current.downtime.copy(
+                            days = if (day in days) days - day else days + day,
+                        ),
+                    )
+                }
             },
         )
 
         Spacer(Modifier.height(Space.cardGap))
 
         BlockedAppsCard(
-            apps = DemoApps,
-            selectedKeys = selectedApps,
+            apps = Platform.entries,
+            selectedKeys = selectedKeys,
             onToggle = { platform ->
-                selectedApps = if (platform.key in selectedApps) {
-                    selectedApps - platform.key
-                } else {
-                    selectedApps + platform.key
+                onUpdate { current ->
+                    val blocked = current.blockedPackages
+                    val packages = platform.packages.toSet()
+                    current.copy(
+                        blockedPackages = if (packages.all { it in blocked }) {
+                            blocked - packages
+                        } else {
+                            blocked + packages
+                        },
+                    )
                 }
             },
         )
@@ -90,9 +128,9 @@ fun AppsScreen(modifier: Modifier = Modifier) {
             title = "Quiet notifications",
             description = "Blocked apps stop buzzing while a rule is on.",
             icon = ReclaimIcons.Bell,
-            granted = notificationsOn,
-            actionLabel = if (notificationsOn) "Turn off" else "Allow access",
-            onAction = { notificationsOn = !notificationsOn },
+            granted = notificationsGranted,
+            actionLabel = if (notificationsGranted) "Open settings" else "Allow access",
+            onAction = { context.startActivity(permissions.notificationSettingsIntent()) },
         )
 
         Spacer(Modifier.height(Space.cardGap))
@@ -102,12 +140,19 @@ fun AppsScreen(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .height(48.dp)
                 .clip(CircleShape)
-                .clickable { paused = !paused },
+                .clickable {
+                    if (isPaused) {
+                        onUpdate { it.copy(pauseUntil = null) }
+                    } else {
+                        showPauseDialog = true
+                    }
+                },
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                text = if (paused) {
-                    "Paused for five minutes. Tap to resume."
+                text = if (isPaused) {
+                    val until = settings.pauseUntil?.atZone(ZoneId.systemDefault())?.toLocalTime()
+                    "Paused until ${until?.format(DateTimeFormatter.ofPattern("HH:mm")) ?: "later"}. Tap to resume."
                 } else {
                     "Pause everything for five minutes"
                 },
@@ -115,6 +160,30 @@ fun AppsScreen(modifier: Modifier = Modifier) {
                 color = ReclaimColors.InkSecondary,
             )
         }
+    }
+
+    if (showPauseDialog) {
+        AlertDialog(
+            onDismissRequest = { showPauseDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showPauseDialog = false
+                        onUpdate { it.copy(pauseUntil = Instant.now().plusSeconds(5 * 60)) }
+                    },
+                ) {
+                    Text("Pause")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showPauseDialog = false }) {
+                    Text("Not now")
+                }
+            },
+            title = { Text("Pause everything?") },
+            text = { Text("Blocking stops for five minutes, then comes back on its own.") },
+            containerColor = ReclaimColors.Surface,
+        )
     }
 }
 
@@ -235,7 +304,7 @@ private fun BlockedAppsCard(
 private fun AppsPreview() {
     ReclaimTheme {
         SectionPreview(PeachSection) {
-            AppsScreen()
+            AppsScreen(settings = AppSettings(), onUpdate = {})
         }
     }
 }

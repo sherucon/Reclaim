@@ -49,7 +49,7 @@ private fun ReclaimRoot(container: AppContainer) {
     when (val current = settings) {
         null -> Box(modifier = Modifier.fillMaxSize().background(ReclaimColors.Canvas))
         else -> if (current.onboardingComplete) {
-            ReclaimApp(container)
+            ReclaimApp(container, current)
         } else {
             OnboardingFlow(container = container, settings = current)
         }

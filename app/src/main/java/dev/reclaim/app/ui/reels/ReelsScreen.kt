@@ -11,8 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +30,7 @@ import dev.reclaim.app.design.components.SoftCard
 import dev.reclaim.app.design.components.StatPill
 import dev.reclaim.app.design.components.StatusRing
 import dev.reclaim.app.design.icons.ReclaimIcons
+import dev.reclaim.app.domain.model.AppSettings
 import dev.reclaim.app.domain.model.Platform
 import dev.reclaim.app.domain.model.Sensitivity
 import dev.reclaim.app.ui.common.SectionPreview
@@ -39,11 +38,13 @@ import dev.reclaim.app.ui.common.SectionPreview
 private val DemoBreaks = listOf(1, 4, 2, 6, 3, 5, 2)
 
 @Composable
-fun ReelsScreen(modifier: Modifier = Modifier) {
-    var sensitivity by rememberSaveable { mutableStateOf(Sensitivity.BALANCED) }
-    var instagram by rememberSaveable { mutableStateOf(true) }
-    var youtube by rememberSaveable { mutableStateOf(true) }
-    var tiktok by rememberSaveable { mutableStateOf(false) }
+fun ReelsScreen(
+    settings: AppSettings,
+    onUpdate: ((AppSettings) -> AppSettings) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val sensitivity = settings.sensitivity
+    val enabledPlatforms = settings.contentPlatforms
 
     ScreenScaffold(
         modifier = modifier,
@@ -57,27 +58,27 @@ fun ReelsScreen(modifier: Modifier = Modifier) {
         SegmentedPills(
             options = Sensitivity.entries.toList(),
             selected = sensitivity,
-            onSelect = { sensitivity = it },
+            onSelect = { level -> onUpdate { it.copy(sensitivity = level) } },
             label = ::sensitivityLabel,
         )
 
         Spacer(Modifier.height(Space.cardGap))
 
         SoftCard {
-            PlatformRow(
+            ReelsPlatformRow(
                 platform = Platform.INSTAGRAM,
-                checked = instagram,
-                onCheckedChange = { instagram = it },
+                enabledPlatforms = enabledPlatforms,
+                onUpdate = onUpdate,
             )
-            PlatformRow(
+            ReelsPlatformRow(
                 platform = Platform.YOUTUBE,
-                checked = youtube,
-                onCheckedChange = { youtube = it },
+                enabledPlatforms = enabledPlatforms,
+                onUpdate = onUpdate,
             )
-            PlatformRow(
+            ReelsPlatformRow(
                 platform = Platform.TIKTOK,
-                checked = tiktok,
-                onCheckedChange = { tiktok = it },
+                enabledPlatforms = enabledPlatforms,
+                onUpdate = onUpdate,
             )
         }
 
@@ -153,11 +154,12 @@ private fun BudgetCard(sensitivity: Sensitivity) {
 }
 
 @Composable
-private fun PlatformRow(
+private fun ReelsPlatformRow(
     platform: Platform,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
+    enabledPlatforms: Set<String>,
+    onUpdate: ((AppSettings) -> AppSettings) -> Unit,
 ) {
+    val checked = platform.key in enabledPlatforms
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -174,7 +176,17 @@ private fun PlatformRow(
         )
         PillToggle(
             checked = checked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = { enabled ->
+                onUpdate { current ->
+                    current.copy(
+                        contentPlatforms = if (enabled) {
+                            current.contentPlatforms + platform.key
+                        } else {
+                            current.contentPlatforms - platform.key
+                        },
+                    )
+                }
+            },
             contentDescription = platform.displayName,
         )
     }
@@ -247,7 +259,7 @@ private fun formatScreens(screens: Float): String =
 private fun ReelsPreview() {
     ReclaimTheme {
         SectionPreview(LilacSection) {
-            ReelsScreen()
+            ReelsScreen(settings = AppSettings(), onUpdate = {})
         }
     }
 }
