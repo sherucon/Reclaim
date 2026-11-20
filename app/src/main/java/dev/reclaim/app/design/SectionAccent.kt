@@ -1,6 +1,6 @@
 package dev.reclaim.app.design
 
-import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 /**
@@ -62,4 +62,4 @@ val SkySection = SectionAccent(
  * Controls read this, so a switch on the Reels tab is lilac and the same switch
  * on the Web tab is sky without any screen passing a color.
  */
-val LocalSectionAccent = staticCompositionLocalOf { SageSection }
+val LocalSectionAccent = compositionLocalOf { SageSection }

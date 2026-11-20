@@ -37,6 +37,8 @@ Roborazzi goldens in `app/src/test/screenshots`.
 | The dock was fully opaque, so scrolling content vanished behind a solid bar. | The dock alone is glass at 74 percent white, with a 168 dp canvas scrim behind it. Content fades as it passes under, shapes show through, and the labels stay readable. |
 | Tab switches felt jittery: the page spring, the wash fall, the capsule step, and the accent snap all started at the halfway point on different timings. | One eased 420 ms page glide, a 340 ms wash crossfade that starts with the page, a capsule that tracks the pager continuously, and accent colours that change at the same moment. |
 | The dock sat flat on the content behind it. | A 12 dp shadow under the bar, visible through the glass at its lower edge. |
+| The section accent never changed on screens after a tab switch, so Apps kept sage controls. | `LocalSectionAccent` was a static composition local, which Compose does not track. It is a tracked `compositionLocalOf` now. |
+| A blocked app showed a material alert for the pause confirmation. | `SoftDialog` uses the app card, pills, and type instead. |
 
 ## Known gaps, by phase
 

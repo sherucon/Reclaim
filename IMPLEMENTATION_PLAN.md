@@ -1653,6 +1653,8 @@ Implementation notes:
 - The Home switches now persist to settings. App blocking and downtime are enforced in this phase; the reels switch waits for Phase 5 and the web switch for Phase 6.
 - Notification suppression only cancels a matching notification. It never reads, rewrites, or forwards one.
 - Package visibility is declared with intent queries for the launcher and for launcher activities, so no `QUERY_ALL_PACKAGES` is needed.
+- MIUI freezes background app processes. While frozen, the accessibility service stays "bound" but receives no events, so blocking stops silently. Settings carries a "Stay awake" card that reports the battery exemption and links to the system list. Verified on the Garnet: frozen means no events, exempt means events resume.
+- A debug-only broadcast (`DebugSettingsReceiver`) forces a downtime window or a pause, so rule variants can be tested without changing the clock.
 
 Tasks:
 

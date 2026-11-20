@@ -11,10 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,10 +36,13 @@ import dev.reclaim.app.design.Space
 import dev.reclaim.app.design.components.CircularCheck
 import dev.reclaim.app.design.components.IconBubble
 import dev.reclaim.app.design.components.PermissionCard
+import dev.reclaim.app.design.components.PillButton
+import dev.reclaim.app.design.components.PillStyle
 import dev.reclaim.app.design.components.PillToggle
 import dev.reclaim.app.design.components.PlatformGlyph
 import dev.reclaim.app.design.components.ScreenScaffold
 import dev.reclaim.app.design.components.SoftCard
+import dev.reclaim.app.design.components.SoftDialog
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.domain.model.AppSettings
 import dev.reclaim.app.domain.model.Platform
@@ -60,10 +61,12 @@ fun AppsScreen(
     val context = LocalContext.current
     val permissions = remember { PermissionChecker(context) }
     var notificationsGranted by remember { mutableStateOf(permissions.isNotificationListenerEnabled()) }
+    var accessibilityGranted by remember { mutableStateOf(permissions.isAppBlockerEnabled()) }
     var showPauseDialog by remember { mutableStateOf(false) }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         notificationsGranted = permissions.isNotificationListenerEnabled()
+        accessibilityGranted = permissions.isAppBlockerEnabled()
     }
 
     // Suppression only means anything while the listener is connected.
@@ -84,6 +87,40 @@ fun AppsScreen(
         title = "Apps",
         subtitle = "Choose what stays out of reach, and when.",
     ) {
+        if (settings.appBlockingEnabled && !accessibilityGranted) {
+            SoftCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconBubble(
+                        icon = ReclaimIcons.ShieldAlert,
+                        tint = ReclaimColors.Blush.Deep,
+                        background = ReclaimColors.Blush.Soft,
+                    )
+                    Spacer(Modifier.width(Space.md))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Blocking is paused",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = ReclaimColors.Ink,
+                        )
+                        Text(
+                            text = "Accessibility is off, so Reclaim cannot see which app is open.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = ReclaimColors.InkSecondary,
+                        )
+                    }
+                }
+                Spacer(Modifier.height(Space.lg))
+                PillButton(
+                    text = "Turn accessibility on",
+                    onClick = { context.startActivity(permissions.accessibilitySettingsIntent()) },
+                    modifier = Modifier.fillMaxWidth(),
+                    style = PillStyle.Secondary,
+                )
+            }
+
+            Spacer(Modifier.height(Space.cardGap))
+        }
+
         DowntimeCard(
             enabled = settings.downtime.enabled,
             onEnabledChange = { enabled ->
@@ -163,26 +200,16 @@ fun AppsScreen(
     }
 
     if (showPauseDialog) {
-        AlertDialog(
-            onDismissRequest = { showPauseDialog = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        showPauseDialog = false
-                        onUpdate { it.copy(pauseUntil = Instant.now().plusSeconds(5 * 60)) }
-                    },
-                ) {
-                    Text("Pause")
-                }
+        SoftDialog(
+            title = "Pause everything?",
+            body = "Blocking stops for five minutes, then comes back on its own.",
+            confirmLabel = "Pause for five minutes",
+            onConfirm = {
+                showPauseDialog = false
+                onUpdate { it.copy(pauseUntil = Instant.now().plusSeconds(5 * 60)) }
             },
-            dismissButton = {
-                TextButton(onClick = { showPauseDialog = false }) {
-                    Text("Not now")
-                }
-            },
-            title = { Text("Pause everything?") },
-            text = { Text("Blocking stops for five minutes, then comes back on its own.") },
-            containerColor = ReclaimColors.Surface,
+            dismissLabel = "Not now",
+            onDismiss = { showPauseDialog = false },
         )
     }
 }

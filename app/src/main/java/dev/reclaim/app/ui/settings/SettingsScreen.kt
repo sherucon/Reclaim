@@ -1,5 +1,8 @@
 package dev.reclaim.app.ui.settings
 
+import android.content.Intent
+import android.os.PowerManager
+import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,10 +16,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import dev.reclaim.app.AppContainer
 import dev.reclaim.app.BuildConfig
 import dev.reclaim.app.design.ReclaimColors
@@ -29,6 +38,7 @@ import dev.reclaim.app.design.components.PillStyle
 import dev.reclaim.app.design.components.PillToggle
 import dev.reclaim.app.design.components.ScreenScaffold
 import dev.reclaim.app.design.components.SoftCard
+import dev.reclaim.app.design.components.StatusPill
 import dev.reclaim.app.design.icons.ReclaimIcons
 import dev.reclaim.app.domain.model.AppSettings
 import dev.reclaim.app.ui.nav.ReclaimBackdrop
@@ -46,6 +56,15 @@ fun SettingsScreen(
     }
     val scope = rememberCoroutineScope()
     val current = settings
+    val context = LocalContext.current
+    val powerManager = remember { context.getSystemService(PowerManager::class.java) }
+    var ignoringBattery by remember {
+        mutableStateOf(powerManager?.isIgnoringBatteryOptimizations(context.packageName) == true)
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        ignoringBattery = powerManager?.isIgnoringBatteryOptimizations(context.packageName) == true
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         ReclaimBackdrop(accent = SageSection)
@@ -86,6 +105,45 @@ fun SettingsScreen(
                         contentDescription = "Anonymous analytics",
                     )
                 }
+            }
+
+            Spacer(Modifier.height(Space.cardGap))
+
+            SoftCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconBubble(
+                        icon = ReclaimIcons.Bell,
+                        tint = ReclaimColors.Butter.Deep,
+                        background = ReclaimColors.Butter.Soft,
+                    )
+                    Spacer(Modifier.width(Space.md))
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Stay awake",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = ReclaimColors.Ink,
+                        )
+                        Text(
+                            text = "MIUI freezes background apps, which stops blocking " +
+                                "silently. Set Reclaim to no restrictions.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = ReclaimColors.InkSecondary,
+                        )
+                    }
+                    StatusPill(active = ignoringBattery)
+                }
+                Spacer(Modifier.height(Space.lg))
+                PillButton(
+                    text = "Open battery settings",
+                    onClick = {
+                        context.startActivity(
+                            Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    style = PillStyle.Secondary,
+                )
             }
 
             Spacer(Modifier.height(Space.cardGap))

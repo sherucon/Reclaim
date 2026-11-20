@@ -3,7 +3,9 @@ package dev.reclaim.app.service.accessibility
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.os.SystemClock
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import dev.reclaim.app.BuildConfig
 import dev.reclaim.app.ReclaimApplication
 import dev.reclaim.app.analytics.AnalyticsEvents
 import dev.reclaim.app.domain.blocking.BlockEvaluator
@@ -41,6 +43,12 @@ class AppBlockerService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        Log.d(
+            "ReclaimBlocker",
+            "connected, ignored=${
+                BlockTargets.ignoredPackages(this)
+            }",
+        )
         ignoredPackages = BlockTargets.ignoredPackages(this)
 
         scope.launch {
@@ -63,6 +71,14 @@ class AppBlockerService : AccessibilityService() {
 
         val packageName = event.packageName?.toString() ?: return
         foregroundPackage = packageName
+        if (BuildConfig.DEBUG) {
+            Log.d(
+                "ReclaimBlocker",
+                "event pkg=$packageName enabled=${settings.appBlockingEnabled} paused=${settings.isPaused(
+                    java.time.Instant.now(),
+                )} blockedPkgs=${settings.blockedPackages.size}",
+            )
+        }
         evaluate(packageName)
     }
 
@@ -75,7 +91,9 @@ class AppBlockerService : AccessibilityService() {
             ignoredPackages = ignoredPackages,
         )
         if (!decision.blocked) return
-        if (!throttle.shouldShow(packageName, SystemClock.elapsedRealtime())) return
+        val allowed = throttle.shouldShow(packageName, SystemClock.elapsedRealtime())
+        if (BuildConfig.DEBUG) Log.d("ReclaimBlocker", "decision=$decision allowed=$allowed")
+        if (!allowed) return
 
         val reason = decision.reason ?: BlockReason.ALWAYS
         container.analytics.logEvent(
@@ -104,9 +122,17 @@ class AppBlockerService : AccessibilityService() {
         runCatching { startActivity(overlay) }
     }
 
-    override fun onInterrupt() = Unit
+    override fun onInterrupt() {
+        Log.d("ReclaimBlocker", "interrupted")
+    }
+
+    override fun onUnbind(intent: android.content.Intent?): Boolean {
+        Log.d("ReclaimBlocker", "unbound")
+        return super.onUnbind(intent)
+    }
 
     override fun onDestroy() {
+        Log.d("ReclaimBlocker", "destroyed")
         scope.cancel()
         super.onDestroy()
     }

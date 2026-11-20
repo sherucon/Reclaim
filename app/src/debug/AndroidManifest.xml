@@ -5,6 +5,15 @@
     <application>
         <!-- Debug builds only: lets QA trigger a crash without touching the UI. -->
         <receiver
+            android:name=".debug.DebugSettingsReceiver"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="dev.reclaim.app.DEBUG_SETTINGS" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
             android:name=".debug.DebugCrashReceiver"
             android:exported="true"
             tools:ignore="ExportedReceiver">
