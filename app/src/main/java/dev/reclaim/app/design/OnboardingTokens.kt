@@ -1,7 +1,9 @@
 package dev.reclaim.app.design
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -11,7 +13,7 @@ import androidx.compose.ui.unit.sp
 import dev.reclaim.app.R
 
 /**
- * The onboarding surface has its own language: light type on the orange wash,
+ * The onboarding surface has its own language: light type on the pink wash,
  * cream pills with a hard ink edge, and Inter instead of the app's PT Serif.
  */
 object OnboardingColors {
@@ -33,6 +35,12 @@ object OnboardingShapes {
     val ActionBorder = 1.2.dp
 }
 
+private val OnWashShadow = Shadow(
+    color = Color.Black.copy(alpha = 0.30f),
+    offset = Offset(0f, 1.5f),
+    blurRadius = 12f,
+)
+
 private val InterFamily = FontFamily(
     Font(R.font.inter_regular, FontWeight.W400),
     Font(R.font.inter_medium, FontWeight.W500),
@@ -45,18 +53,21 @@ object OnboardingType {
         fontWeight = FontWeight.W600,
         fontSize = 42.7.sp,
         lineHeight = 50.sp,
+        shadow = OnWashShadow,
     )
     val Title = TextStyle(
         fontFamily = InterFamily,
         fontWeight = FontWeight.W500,
         fontSize = 32.sp,
         lineHeight = 39.sp,
+        shadow = OnWashShadow,
     )
     val Body = TextStyle(
         fontFamily = InterFamily,
         fontWeight = FontWeight.W400,
         fontSize = 16.sp,
         lineHeight = 19.5.sp,
+        shadow = OnWashShadow,
     )
     val Caption = TextStyle(
         fontFamily = InterFamily,

@@ -62,10 +62,27 @@ import dev.reclaim.app.domain.model.Platform
 internal fun OnboardingBackdrop() {
     Box(modifier = Modifier.fillMaxSize().background(OnboardingColors.Paper)) {
         Image(
-            painter = painterResource(R.drawable.onboarding_orange),
+            painter = painterResource(R.drawable.onboarding_pink),
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
+        )
+        // Light type needs a deeper wash behind it than the gradient offers on
+        // its own, so the top two thirds get a soft scrim and the bottom keeps
+        // the full pink.
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0f to Color.Black.copy(alpha = 0.38f),
+                            0.60f to Color.Black.copy(alpha = 0.34f),
+                            0.80f to Color.Black.copy(alpha = 0.08f),
+                            0.92f to Color.Transparent,
+                        ),
+                    ),
+                ),
         )
     }
 }
@@ -74,7 +91,7 @@ internal fun OnboardingBackdrop() {
  * The design is light type over a saturated gradient, so the status bar icons
  * turn light while onboarding is on screen and go back to the app's dark-on-
  * light style when the flow finishes. The navigation bar stays dark: the
- * gradient fades to a pale orange behind it.
+ * gradient fades to a pale pink behind it.
  */
 @Composable
 internal fun OnboardingLightSystemBars() {
